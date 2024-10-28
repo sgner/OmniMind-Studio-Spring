@@ -1,0 +1,89 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 1000MB
+  ai:
+    retry:
+      max-attempts: 1
+    qianfan:
+      api-key: zFMEO3QLnRqbV4woUK3o6v9f
+      secret-key: dx3q5r7cBkBo9QPcZ6nfuUp02VRywPJA
+      image:
+        base-url: https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/text2image/sd_xl
+    openai:
+      image:
+        options:
+          response-format: b64_json
+      base-url: https://api.xty.app
+      api-key: sk-KTif2viikDTNikKhEd23607b0707477b8f80B33bE50c4c5c
+  rabbitmq:
+    host:
+    port: 5672
+    virtual-host: /
+    username: litian
+    password: 123321
+    listener:
+      simple:
+        prefetch: 1  # 每次预取一条消息，从而解决了消息平均分配给了能力不同的消费者的问题
+    connection-timeout: 1s
+    template:
+      retry:
+        enabled: true  #开始重新尝试
+        initial-interval: 1000ms #失败后初始等待时间
+        multiplier: 1  #失败后等待时间倍数
+        max-attempts: 3 # 最大重试次数
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ai-chat-a?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: cfwrettt.com
+  application:
+    name: a-chat-ai
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 1
+          time-between-eviction-runs: 10s
+server:
+  port: 5050
+logging:
+  level:
+    com.a-chat-ai: debug
+  pattern:
+    dateformat: HH:mm:ss
+mybatis-plus:
+  type-aliases-package: com.ai.chat.a.entity  # 实体类所在包
+  configuration:
+    map-underscore-to-camel-case: true  # 是否开启下划线和驼峰的映射
+    cache-enabled: false  # 是否开启二级缓存
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler # 枚举处理器
+  global-config:
+    db-config:
+      id-type: auto   # id主键策略
+      update-strategy: not_null # 更新策略, 只更新不为null的字段
+#      logic-delete-field: flag  # 逻辑删除的字段名称
+#      logic-delete-value: 1  # 逻辑删除的值
+#      logic-not-delete-value: 0  # 逻辑未删除的值
+com:
+  ai:
+    chat:
+      jwt:
+        secret-key: litianci0223799
+        ttl: 36000000
+        token-name: Authorization
+        admin-secret-key: 0223799litianci
+      openai:
+       model: gpt-3.5-turbo
+      page-size: 10
+alioss:
+  access-key-id: LTAI5tKK9ayrJ7TftSfjtfaj
+  endpoint: oss-cn-beijing.aliyuncs.com
+  access-key-secret: S6z16d5FioWNnrhkax4zOWDy4Hm7U5
+  bucket-name: web-tianci
+  project-name: a-ai
