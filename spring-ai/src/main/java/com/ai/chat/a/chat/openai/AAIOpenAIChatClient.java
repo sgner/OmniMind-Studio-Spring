@@ -19,6 +19,7 @@ import org.springframework.ai.model.Media;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.MimeType;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;

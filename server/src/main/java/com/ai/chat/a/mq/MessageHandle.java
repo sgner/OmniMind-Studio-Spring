@@ -2,8 +2,6 @@ package com.ai.chat.a.mq;
 
 import com.ai.chat.a.dto.MessageSendDTO;
 import com.ai.chat.a.websocket.ChannelContextUtils;
-import com.alibaba.fastjson.JSONObject;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
