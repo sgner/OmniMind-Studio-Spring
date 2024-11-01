@@ -170,9 +170,8 @@
 			<version>5.2.3</version> <!-- 用于处理 .doc 文件 -->
 		</dependency>
 		<dependency>
-			<groupId>io.milvus</groupId>
-			<artifactId>milvus-sdk-java</artifactId>
-			<version>2.4.4</version>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-milvus-store-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
@@ -202,6 +201,13 @@
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-bom</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<repositories>

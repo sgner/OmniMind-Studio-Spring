@@ -1,9 +1,13 @@
 package com.ai.chat.a.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.ai.chat.a.constant.Constants;
 import com.ai.chat.a.dto.CommentDTO;
+import com.ai.chat.a.dto.MessageDTO;
 import com.ai.chat.a.dto.MessageSendDTO;
 import com.ai.chat.a.dto.SysSettingDTO;
+import com.ai.chat.a.entity.CreateSessionData;
+import com.ai.chat.a.entity.WsInitData;
 import com.ai.chat.a.enums.*;
 import com.ai.chat.a.mq.MessageHandle;
 import com.ai.chat.a.po.*;
@@ -16,15 +20,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
-
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     private final RedisComponent redisComponent;
     private final SubscribeService subscribeService;
@@ -65,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         subscribeService.save(subscribe);
 
         //增加会话信息
-        String sessionId = StringTools.getChatSessionId4User(new String[]{userId+"", robotId});
+        String sessionId = StringTools.getChatSessionId4User(new String[]{userId, robotId});
 
         Session session = Session.builder()
                 .lastMessage(senMessage)
@@ -125,7 +132,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .updateTime(LocalDateTime.now())
                 .build();
         subscribeService.save(subscribe);
-        String sessionId = StringTools.getChatSessionId4User(new String[]{userId+"", robotId});
+        String sessionId = StringTools.getChatSessionId4User(new String[]{userId, robotId});
         Session session = Session.builder()
                 .sessionId(sessionId)
                 .userId(userId)
@@ -158,6 +165,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .conversationId(conversations.getId())
                 .build();
         answersService.save(answers);
+
+        // TODO 添加extendData
         MessageSendDTO messageSendDTO = MessageSendDTO.builder()
                 .sendUserId(robotId)
                 .messageType(MessageTypeEnum.CHAT.getType())
@@ -174,20 +183,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public String newSession(String robotId) {
+    public Session newSession(String robotId) {
         Robot robot = robotService.getById(robotId);
         User user = this.getById(ThreadLocalUtil.get());
         String sessionId = StringTools.getChatSessionId4User(new String[]{ThreadLocalUtil.get(),robotId});
-        sessionService.save(Session.builder()
+        Session session = Session.builder()
                 .sessionId(sessionId)
                 .robotId(robotId)
                 .robotName(robot.getName())
                 .robotType(UserRobotTypeEnum.ROBOT.getType())
-                .status(1)
+                .status(SessionStatusEnum.NORMAL.getStatus())
                 .lastMessage(Constants.NEW_SESSION)
                 .lastTime(LocalDateTime.now())
                 .userId(ThreadLocalUtil.get())
-                .build());
+                .build();
+        sessionService.save(session);
         Conversations conversations = Conversations.builder()
                 .userId(user.getId())
                 .sessionId(sessionId)
@@ -195,7 +205,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .createTime(LocalDateTime.now())
                 .build();
         conversationsService.save(conversations);
-        answersService.save(Answers.builder()
+        Answers answers = Answers.builder()
                 .answer(Constants.NEW_SESSION)
                 .answerType(MessageTypeEnum.CHAT.getType())
                 .answerRobotId(robotId).createTime(LocalDateTime.now())
@@ -206,10 +216,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .answerRobotName(robot.getName())
                 .sessionId(sessionId)
                 .conversationId(conversations.getId())
-                .build());
+                .build();
+
+        answersService.save(answers);
+        MessageDTO messageDTO = MessageDTO.builder().question(conversations).answers(List.of(answers)).build();
+        log.info("会话{}",session);
+        SessionChatUser sessionChatUser = BeanUtil.copyProperties(session, SessionChatUser.class);
+        CreateSessionData createSessionData = CreateSessionData.builder().sessionChatUser(sessionChatUser).messageDTO(messageDTO).build();
         MessageSendDTO messageSendDTO = MessageSendDTO.builder()
+                .extendData(createSessionData)
                 .sendUserId(robotId)
-                .messageType(MessageTypeEnum.CHAT.getType())
+                .messageType(MessageTypeEnum.CREATE_SESSION.getType())
                 .contactName(user.getUsername())
                 .messageContent(Constants.NEW_SESSION)
                 .sendUserNickName(robot.getName())
@@ -220,6 +237,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .contactId(user.getId())
                 .build();
         messageHandle.sendMessage(messageSendDTO);
-        return sessionId;
+        return session;
     }
 }

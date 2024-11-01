@@ -68,7 +68,7 @@ public class ChannelContextUtils {
               SessionChatUserQuery sessionQuery = new SessionChatUserQuery();
               sessionQuery.setPageNo(0);
               sessionQuery.setPageSize(20);
-              Page<Session> page = sessionQuery.toMpPage(new OrderItem().setColumn("lastTime").setAsc(false));
+              Page<Session> page = sessionQuery.toMpPage(new OrderItem().setColumn("last_time").setAsc(false));
               Page<Session> paged = sessionService.lambdaQuery().eq(Session::getUserId, id).page(page);
               List<Session> records = paged.getRecords();
               List<SessionChatUser> sessionChatUsers = BeanUtil.copyToList(records, SessionChatUser.class);

@@ -2,6 +2,7 @@ package com.ai.chat.a.enums;
 
 public enum MessageTypeEnum {
     INIT(0, "", "连接WS获取信息"),
+    CREATE_SESSION(13, "", "创建会话"),
     ADD_FRIEND(1, "", "添加机器人打招呼消息"),
     CHAT(2, "", "普通聊天消息"),
     GROUP_CREATE(3, "群组已经创建好，可以和机器人畅聊了", "群创建成功"),

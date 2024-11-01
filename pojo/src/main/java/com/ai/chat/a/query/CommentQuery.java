@@ -14,9 +14,7 @@ public class CommentQuery extends PageQuery{
     private Integer type;
     private String  userId;
     private String robotId;
-    @Resource
-    PageSizeProperties pageSizeProperties;
     public <T> Page<T> toMpPageDefaultSortByLike(){
-        return toMpPageTwoColumn(true,"like","createTime");
+        return toMpPageTwoColumn(false,"`like`","create_time");
     };
 }

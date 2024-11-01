@@ -182,4 +182,11 @@ public class UploadController {
         }
         return R.success(showUploadFileList);
     }
+
+    @PostMapping("/openai/rag/{model}")
+    public R uploadAttachmentRag(){
+        //TODO 对上传的文件进行向量化处理，存储，和ai分析
+
+        return R.success();
+    }
 }

@@ -31,4 +31,18 @@ public class OpenaiController {
         sessionService.updateSession(currentSession,userChatDTO,generate);
         return R.success();
     }
+
+    @PostMapping("/openai/rag/{model}")
+    public R chatWithOpenaiRag(){
+         // TODO 添加记忆功能
+        // TODO 完成RAG对话，解决超长文本记忆和token限制问题
+        return R.success();
+    }
+
+    @PostMapping("/openai/rag/flux/{model}")
+    public R chatWithOpenaiRagFlux(){
+        // TODO 添加记忆功能
+        // TODO 流式对话并且解决超长文本记忆和token限制问题
+        return R.success();
+    }
 }

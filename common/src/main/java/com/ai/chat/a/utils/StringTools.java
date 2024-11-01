@@ -1,4 +1,5 @@
 package com.ai.chat.a.utils;
+import cn.hutool.core.util.IdUtil;
 import com.ai.chat.a.constant.Constants;
 import com.ai.chat.a.enums.UserRobotTypeEnum;
 import com.ai.chat.a.exception.BusinessException;
@@ -104,7 +105,7 @@ public class StringTools {
     }
     public static final String getChatSessionId4User(String[] userIds) {
         Arrays.sort(userIds);
-        return encodeByMD5(StringUtils.join(userIds, ""));
+        return encodeByMD5(StringUtils.join(userIds, IdUtil.simpleUUID(), ""));
     }
 
     public static String cleanHtmlTag(String content) {

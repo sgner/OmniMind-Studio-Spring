@@ -1,6 +1,4 @@
 package com.ai.chat.a.query;
-
-import com.ai.chat.a.properties.PageSizeProperties;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
@@ -34,7 +32,7 @@ public class PageQuery {
         return this.toMpPage(new OrderItem().setColumn(defaultSortBy).setAsc(isAsc));
     }
     public <T> Page<T> toMpPageTwoColumn(boolean  isAsc, String ... defaultSortBy){
-        return this.toMpPage(new OrderItem().setColumn(defaultSortBy[0]).setAsc(isAsc).setColumn(defaultSortBy[1]).setAsc(isAsc));
+        return this.toMpPage(new OrderItem().setColumn(defaultSortBy[0]).setAsc(isAsc), new OrderItem().setColumn(defaultSortBy[1]).setAsc(isAsc));
     }
     public <T> Page<T> toMpPageDefaultSortByCreateTimeDesc() {
         return toMpPage("create_time", false);

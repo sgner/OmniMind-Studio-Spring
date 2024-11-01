@@ -1,12 +1,15 @@
 package com.ai.chat.a.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ai.chat.a.constant.Constants;
 import com.ai.chat.a.constant.JwtClaimsConstant;
 import com.ai.chat.a.constant.UserConstant;
 import com.ai.chat.a.dto.*;
 import com.ai.chat.a.entity.CommentsIsMe;
 import com.ai.chat.a.entity.RobotSquare;
 import com.ai.chat.a.entity.UserUploadFile;
+import com.ai.chat.a.enums.SessionStatusEnum;
+import com.ai.chat.a.enums.UserRobotTypeEnum;
 import com.ai.chat.a.po.*;
 import com.ai.chat.a.properties.JWTProperties;
 import com.ai.chat.a.query.CommentQuery;
@@ -14,10 +17,12 @@ import com.ai.chat.a.redis.RedisComponent;
 import com.ai.chat.a.result.R;
 import com.ai.chat.a.service.*;
 import com.ai.chat.a.utils.*;
+import com.ai.chat.a.vo.ClickLikeVO;
 import com.ai.chat.a.vo.LoginVO;
 import com.ai.chat.a.vo.UserRobotQueryVO;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +53,7 @@ public class UserController{
     private final RedisComponent redisComponent;
     private final CommentService commentService;
     private final UserCommentLikeService userCommentLikeService;
+    private final SessionService sessionService;
     @PostMapping("/login")
     public R login(@RequestBody LoginDTO loginDTO){
         log.info("用户{}登录",loginDTO.getAccount());
@@ -231,33 +237,44 @@ public class UserController{
     @PostMapping("/comment/like")
 
    public R commentLike(@RequestBody CommentQuery commentQuery){
-       UserLikeComment commentLikeServiceOne = userCommentLikeService.getOne(new LambdaQueryWrapper<UserLikeComment>()
-               .eq(UserLikeComment::getUserId, ThreadLocalUtil.get())
-               .eq(UserLikeComment::getCommentId, commentQuery.getCommentId())
-               .eq(UserLikeComment::getRobotId, commentQuery.getRobotId()));
-       UpdateChainWrapper<Comments> update = commentService.update();
-       update
-               .eq("user_id",ThreadLocalUtil.get())
-               .eq("comment_id",commentQuery.getCommentId())
-               .eq("robot_id",commentQuery.getRobotId());
-       if(commentLikeServiceOne != null){
-             update.setSql("like = like-1");
-             userCommentLikeService.removeById(commentLikeServiceOne.getId());
-       }else {
-           update.setSql("like = like+1");
-           userCommentLikeService.save(UserLikeComment.builder()
-                   .userId(ThreadLocalUtil.get())
-                   .robotId(commentQuery.getRobotId())
-                   .build());
-       }
-        commentService.update(update);
+        log.info("评论点赞:{}",commentQuery);
+        boolean like = false;
+        boolean success = false;
+        try{
+            UserLikeComment commentLikeServiceOne = userCommentLikeService.getOne(new LambdaQueryWrapper<UserLikeComment>()
+                    .eq(UserLikeComment::getUserId, ThreadLocalUtil.get())
+                    .eq(UserLikeComment::getCommentId, commentQuery.getCommentId())
+                    .eq(UserLikeComment::getRobotId, commentQuery.getRobotId()));
+            LambdaUpdateWrapper<Comments> update = new LambdaUpdateWrapper<>();
+            update
+                    .eq(Comments::getUserId,ThreadLocalUtil.get())
+                    .eq(Comments::getId,commentQuery.getCommentId())
+                    .eq(Comments::getRobotId,commentQuery.getRobotId());
+            if(commentLikeServiceOne != null){
+                update.setSql("`like` = `like`-1");
+                userCommentLikeService.removeById(commentLikeServiceOne.getId());
+            }else {
+                update.setSql("`like` = `like`+1");
+                userCommentLikeService.save(UserLikeComment.builder()
+                        .commentId(commentQuery.getCommentId())
+                        .userId(ThreadLocalUtil.get())
+                        .robotId(commentQuery.getRobotId())
+                        .build());
+                like = true;
+            }
+            commentService.update(update);
+            success = true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 //       Page<Comments> mpPageDefaultSortByLike = commentQuery.toMpPageDefaultSortByLike();
 //       Page<Comments> commentsPage = commentService.lambdaQuery().eq(Comments::getRobotId, commentQuery.getRobotId())
 //               .eq(Comments::getType, commentQuery.getType())
 //               .page(mpPageDefaultSortByLike);
 //       commentService.list(new LambdaQueryWrapper<Comments>().eq(Comments::getRobotId,commentLikeDTO.getRobotId()));
 
-       return R.success(true);
+       return R.success(ClickLikeVO.builder().like(like).success(success).build());
    }
    @PostMapping("/myComment")
     public R myComment(@RequestBody CommentQuery commentQuery){
@@ -268,4 +285,5 @@ public class UserController{
                .page(mpPageDefaultSortByLike);
        return R.success(PageDTO.of(commentsPage,Comments.class));
    }
+
 }
