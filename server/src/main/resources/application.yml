@@ -89,3 +89,28 @@ alioss:
   access-key-secret: S6z16d5FioWNnrhkax4zOWDy4Hm7U5
   bucket-name: web-tianci
   project-name: a-ai
+xf:
+  appid: 2b1eb46a
+  apiSecret: ZWY3MDAzZWIyMjEyMWY4ZDhhYTAwZTZi
+  apiKey: aac54d5d63078e3d1260751ce32c93c2
+  text:
+    correction:
+      hostUrl: https://api.xf-yun.com/v1/private/s9a87e3ec
+  xfxh:
+    cosplay:
+      interaction:
+        interactiveUrl: wss://ai-character.xfyun.cn/api/open/interactivews/
+        interactionType: "obs"
+      player:
+        url: https://ai-character.xfyun.cn/api
+        playerType: 机智的玩家
+        desc: 穿越时空的旅行者
+      agent:
+        name: 慈禧太后
+        type: 傲娇
+        desc: 她是晚清帝国的慈禧太后
+  list:
+    black_list:
+    white_list:
+    res_id: base
+    hostUrl: https://evo-gen.xfyun.cn/individuation/gen/uploa

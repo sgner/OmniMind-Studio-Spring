@@ -11,6 +11,11 @@
     <dependencies>
         <dependency>
             <groupId>com.ai.chat.a</groupId>
+            <artifactId>xf</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ai.chat.a</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

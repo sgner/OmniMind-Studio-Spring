@@ -25,6 +25,7 @@
 		<module>pojo</module>
 		<module>server</module>
 		<module>common</module>
+		 <module>xf</module>
         <module>spring-ai</module>
     </modules>
 	<scm>
