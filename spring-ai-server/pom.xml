@@ -20,7 +20,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
-    <artifactId>spring-ai</artifactId>
+    <artifactId>spring-ai-server</artifactId>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>

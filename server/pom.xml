@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>com.ai.chat.a</groupId>
-            <artifactId>spring-ai</artifactId>
+            <artifactId>spring-ai-server</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

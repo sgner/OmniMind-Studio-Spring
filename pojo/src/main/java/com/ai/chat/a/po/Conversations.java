@@ -1,18 +1,13 @@
 package com.ai.chat.a.po;
-import com.ai.chat.a.entity.UserUploadFile;
 import com.ai.chat.a.serialize.LocalDateTimeToMillisSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

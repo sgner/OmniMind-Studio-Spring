@@ -1,0 +1,8 @@
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\chat\openai\AAIOpenAIChatClient.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\DocumentReaderConfig.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\MilvusServiceConfig.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\OpenaiChatConfig.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\embedding\AAIOpenAIEmbedding.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\image\qianfan\AAIQianfanImageClient.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\redis\RedisUtil.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\structuredOutput\JSONStructuredOutput.java

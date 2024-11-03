@@ -9,8 +9,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="pojo" />
         <module name="server" />
-        <module name="spring-ai" />
         <module name="common" />
+        <module name="spring-ai-server" />
         <module name="xf" />
       </profile>
     </annotationProcessing>
@@ -21,7 +21,7 @@
       <module name="common" options="-parameters" />
       <module name="pojo" options="-parameters" />
       <module name="server" options="-parameters" />
-      <module name="spring-ai" options="-parameters" />
+      <module name="spring-ai-server" options="-parameters" />
       <module name="xf" options="-parameters" />
     </option>
   </component>

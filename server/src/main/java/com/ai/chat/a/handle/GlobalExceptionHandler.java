@@ -22,5 +22,4 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
         return R.error(ErrorCode.SUCCESS,ex.getMessage());
     }
-
 }

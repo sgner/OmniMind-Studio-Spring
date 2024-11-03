@@ -1,6 +1,5 @@
 package com.ai.chat.a.starategy.FileHandle;
 
-import com.ai.chat.a.entity.ReadMediaFile;
 import com.ai.chat.a.starategy.FileHandlerStrategy;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;

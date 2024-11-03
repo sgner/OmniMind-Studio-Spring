@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,7 +76,10 @@ public class FileHandle {
         for (MultipartFile keyFrame : keyFrames) {
             mediaList.add(new Media(MimeTypeUtils.parseMimeType(FileUtil.detectFileType(keyFrame)), convertMultipartFileToResource(keyFrame)));
         }
-        ChatResponse response = openAiChatModel.call(new Prompt(List.of(new UserMessage(Constants.HANDLE_VIDEO_PROMPT,mediaList)),OpenAiChatOptions.builder().withModel(model).build()));
+        ChatResponse response = openAiChatModel.call(new Prompt(List.of(new UserMessage(Constants.HANDLE_VIDEO_PROMPT,mediaList)),OpenAiChatOptions.builder()
+                .withModel(model)
+                .withHttpHeaders(Map.of("Accept-Encoding","identity"))
+                .build()));
         return ReadMediaFile.builder().prompt(response.getResult().getOutput().getContent()).type(type).fetch(true).desc(JSONObject.toJSONString(keyFrames)).build();
     }
     public ReadMediaFile handleAudio(String filePath){

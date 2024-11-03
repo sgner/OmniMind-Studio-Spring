@@ -3,15 +3,12 @@ package com.ai.chat.a.utils;
 import com.ai.chat.a.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
-import org.springframework.ai.document.Document;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.util.List;
 
 @Slf4j
 public class FileUtil {
@@ -87,10 +84,5 @@ public class FileUtil {
             }
             return 5; // 其他文件类型
         }
-    }
-
-    public static List<Document> splitFile(Resource resource){
-        AAIDocumentReader aaiDocumentReader = new AAIDocumentReader(resource);
-        return aaiDocumentReader.get();
     }
 }

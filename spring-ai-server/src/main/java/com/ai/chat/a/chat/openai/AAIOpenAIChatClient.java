@@ -7,6 +7,7 @@ import com.ai.chat.a.entity.UserIdea;
 import com.ai.chat.a.entity.UserUploadFile;
 import com.ai.chat.a.image.qianfan.AAIQianfanImageClient;
 import com.ai.chat.a.redis.RedisUtil;
+import com.ai.chat.a.structuredOutput.JSONStructuredOutput;
 import com.ai.chat.a.utils.*;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
@@ -28,6 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 @Data
 @Slf4j
 public class AAIOpenAIChatClient {
@@ -41,6 +44,8 @@ public class AAIOpenAIChatClient {
        private String defaultModel;
        @Autowired
        private RedisUtil redisUtil;
+       @Autowired
+       private JSONStructuredOutput jsonStructuredOutput;
        /**
         * 当前对话没有记忆功能，实现记忆功能只需要存储上下文对话
         * */
@@ -107,7 +112,10 @@ public class AAIOpenAIChatClient {
                      log.info("无想法普通问题");
                      userMessage =  new UserMessage(userChatDTO.getQuestion(),mediaList);
                }
-               prompt = new Prompt(List.of(systemMessage,userMessage),OpenAiChatOptions.builder().withModel(setDefault(model)).build());
+               prompt = new Prompt(List.of(systemMessage,userMessage),OpenAiChatOptions.builder()
+                       .withModel(setDefault(model))
+                       .withHttpHeaders(Map.of("Accept-Encoding","identity"))
+                       .build());
                response = chatClient.call(prompt);
 
            }else {
@@ -139,7 +147,11 @@ public class AAIOpenAIChatClient {
                    log.info("普通问题");
                    userMessage =  new UserMessage(userChatDTO.getQuestion());
                }
-               prompt = new Prompt(userMessage,OpenAiChatOptions.builder().withModel(setDefault(model)).build());
+               prompt = new Prompt(userMessage,OpenAiChatOptions
+                       .builder()
+                       .withModel(setDefault(model))
+                       .withHttpHeaders(Map.of("Accept-Encoding","identity"))
+                       .build());
                log.info("prompt:{}", prompt.toString());
                response = chatClient.call(prompt);
            }
@@ -166,16 +178,14 @@ public class AAIOpenAIChatClient {
               return model;
        }
      private UserIdea getUserIdea(String prompt){
-        prompt+=Constants.USER_IDEA_PROMPT;
-        ChatResponse response = chatClient.call(new Prompt(new UserMessage(prompt),OpenAiChatOptions.builder().withModel("gpt-4o-mini").build()));
-        String idea = response.getResult().getOutput().getContent();
-        log.info("AI idea: {}",idea);
-        return handleUserIdea(idea);
-    }
+         UserIdea userIdea = jsonStructuredOutput.userIdeaOutput(prompt);
+         log.info("userIdea:{}", userIdea);
+         if(userIdea == null){
+             userIdea = handleUserIdea(prompt);
+         }
+         return userIdea;
+     }
     private UserIdea handleUserIdea(String idea){
-        try{
-            return JSONObject.parseObject(StringTools.extractJsonString(idea), UserIdea.class);
-        } catch (Exception e){
             return JSONObject.parseObject("""
                     {                "generateImage":false,
                                     "generateVideo":false,
@@ -183,8 +193,6 @@ public class AAIOpenAIChatClient {
                                     "style":"",
                                     "prompt":""
                                 }""",UserIdea.class);
-        }
-
     }
     private void stringPathToMedia(String path,List<Media> mediaList) throws MalformedURLException {
                 log.info(path);

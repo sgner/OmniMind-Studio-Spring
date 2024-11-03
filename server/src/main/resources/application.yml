@@ -14,6 +14,9 @@ spring:
       image:
         base-url: https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/text2image/sd_xl
     openai:
+      embedding:
+        base-url: https://api.xty.app
+        api-key: sk-KTif2viikDTNikKhEd23607b0707477b8f80B33bE50c4c5c
       image:
         options:
           response-format: b64_json

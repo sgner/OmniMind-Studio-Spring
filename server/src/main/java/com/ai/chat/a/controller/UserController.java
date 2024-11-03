@@ -204,6 +204,7 @@ public class UserController{
                .createTime(LocalDateTime.now())
                .type(commentDTO.getType())
                .username(user.getUsername())
+               .like(0)
                .avatar(user.getAvatar())
                .build();
        switch (commentDTO.getType()){

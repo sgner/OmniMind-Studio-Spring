@@ -9,17 +9,17 @@ import com.ai.chat.a.enums.ErrorCode;
 import com.ai.chat.a.enums.MessageTypeEnum;
 import com.ai.chat.a.enums.UploadEnum;
 import com.ai.chat.a.enums.UserRobotTypeEnum;
-import com.ai.chat.a.exception.BusinessException;
 import com.ai.chat.a.handle.FileHandle;
 import com.ai.chat.a.html.TimeOut;
+import com.ai.chat.a.milvus.AVectorDB;
 import com.ai.chat.a.mq.MessageHandle;
 import com.ai.chat.a.po.Session;
 import com.ai.chat.a.po.User;
 import com.ai.chat.a.redis.RedisComponent;
 import com.ai.chat.a.result.R;
-import com.ai.chat.a.service.RobotService;
 import com.ai.chat.a.service.SessionService;
 import com.ai.chat.a.service.UserService;
+import com.ai.chat.a.structuredOutput.JSONStructuredOutput;
 import com.ai.chat.a.utils.AliOssUpload;
 import com.ai.chat.a.utils.FileUtil;
 import com.ai.chat.a.utils.ThreadLocalUtil;
@@ -37,8 +37,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/upload")
 @RequiredArgsConstructor
@@ -50,7 +48,7 @@ public class UploadController {
     private final SessionService sessionService;
     private final MessageHandle messageHandle;
     private final UserService userService;
-    private final RobotService robotService;
+    private final  AVectorDB aVectorDB;
     private final AtomicBoolean shouldTerminate = new AtomicBoolean(false);
 
     //TODO 逻辑复杂，拆分代码
@@ -187,6 +185,12 @@ public class UploadController {
     public R uploadAttachmentRag(){
         //TODO 对上传的文件进行向量化处理，存储，和ai分析
 
+        return R.success();
+    }
+    @PostMapping("/rag/test")
+    public R test(@RequestParam MultipartFile file) {
+        aVectorDB.addDocument(file.getResource());
+//        UserIdea userIdea = JSONStructuredOutput.userIdeaOutput("一段动听的音乐，激情的金属声,是一个电影片段");
         return R.success();
     }
 }
