@@ -23,11 +23,31 @@ public class JSONStructuredOutput {
         BeanOutputConverter<UserIdea> userIdeaBeanOutputConverter = new BeanOutputConverter<>(UserIdea.class);
         String format = userIdeaBeanOutputConverter.getFormat();
         String template = """
-          Guess and generate the user's thoughts based on the idea{idea}
-          Only one option can be true, or all options are false.\s
-          The prompt must be in English.\s
-          The style for the generated content should be chosen from the following options: Base, 3D Model, Analog Film, Anime, Cinematic, Comic Book, Craft Clay, Digital Art, Enhance, Fantasy Art, Isometric, Line Art, Lowpoly, Neonpunk, Origami, Photographic, Pixel Art, Texture. \s
-          If it's not for generating anything, then the prompt and style must be empty strings.\s
+          {idea}
+          Now please infer whether the above text is requesting the generation of an image, video, or audio, or if it is none of these.
+          Note: You can only select one among generating an image, video, or audio; multiple selections like\s
+          generateImage:true, generateVideo:true, generateVoice:false are not allowed. It can also be none, i.e., generateImage:false, generateVideo:false, generateVoice:false
+          If it is not for generating an image, video, or audio, then there is no need to infer the style. If it is for generating an image or video, please infer the requested style, and the style can only be one of the following:
+          Base: Basic Style
+          3D Model
+          Analog Film
+          Anime
+          Cinematic
+          Comic Book
+          Craft Clay
+          Digital Art
+          Enhance
+          Fantasy Art
+          Isometric
+          Line Art
+          Lowpoly
+          Neonpunk
+          Origami
+          Photographic
+          Pixel Art
+          Texture
+          If it is not for generating an image or video, then there is no need to provide prompts. If the text means generating similar images or videos (i.e., the user uploaded reference files), then prompts do not need to be provided.
+          If it is for generating an image or video, please provide your recommended prompts; the prompts must be in English. Most importantly, you must give the following JSON format text at the end, with no other responses. Again, do not include any other responses; you must provide the following JSON format:
           {format}
         """;
         PromptTemplate promptTemplate = new PromptTemplate(template, Map.of("idea", idea, "format", format));
