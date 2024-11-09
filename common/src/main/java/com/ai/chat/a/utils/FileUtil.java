@@ -22,6 +22,16 @@ public class FileUtil {
             throw new BusinessException("未知文件");
         }
     }
+    public static String detectFileType(Resource file) {
+        Tika tika = new Tika();
+        try {
+            log.info("文件类型为: " + tika.detect(file.getInputStream()));
+            return tika.detect(file.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BusinessException("未知文件");
+        }
+    }
     public static Resource convertMultipartFileToResource(MultipartFile file) throws IOException {
         InputStream inputStream = file.getInputStream();
         return new InputStreamResource(inputStream);

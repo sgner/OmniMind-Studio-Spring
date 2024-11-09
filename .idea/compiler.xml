@@ -9,8 +9,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="pojo" />
         <module name="server" />
+        <module name="stable-diffusion" />
         <module name="common" />
         <module name="spring-ai-server" />
+        <module name="suno-ai" />
         <module name="xf" />
       </profile>
     </annotationProcessing>
@@ -22,6 +24,8 @@
       <module name="pojo" options="-parameters" />
       <module name="server" options="-parameters" />
       <module name="spring-ai-server" options="-parameters" />
+      <module name="stable-diffusion" options="-parameters" />
+      <module name="suno-ai" options="-parameters" />
       <module name="xf" options="-parameters" />
     </option>
   </component>

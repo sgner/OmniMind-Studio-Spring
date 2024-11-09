@@ -16,12 +16,12 @@ spring:
     openai:
       embedding:
         base-url: https://api.xty.app
-        api-key: sk-KTif2viikDTNikKhEd23607b0707477b8f80B33bE50c4c5c
+        api-key: sk-s9aH063l8Z9cbdfz6d3dAb9a518a48F6931a1e87D4A71849
       image:
         options:
           response-format: b64_json
       base-url: https://api.xty.app
-      api-key: sk-KTif2viikDTNikKhEd23607b0707477b8f80B33bE50c4c5c
+      api-key: sk-s9aH063l8Z9cbdfz6d3dAb9a518a48F6931a1e87D4A71849
   rabbitmq:
     host:
     port: 5672

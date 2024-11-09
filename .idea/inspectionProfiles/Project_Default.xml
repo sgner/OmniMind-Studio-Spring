@@ -1,0 +1,103 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="AutoCloseableResource" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="METHOD_MATCHER_CONFIG" value="java.util.Formatter,format,java.io.Writer,append,com.google.common.base.Preconditions,checkNotNull,org.hibernate.Session,close,java.io.PrintWriter,printf,java.io.PrintStream,printf,okhttp3.Call,execute" />
+    </inspection_tool>
+    <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <Languages>
+        <language minSize="112" name="Java" />
+      </Languages>
+    </inspection_tool>
+    <inspection_tool class="VulnerableLibrariesLocal" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="isIgnoringEnabled" value="true" />
+      <option name="ignoredModules">
+        <list>
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="common" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+        </list>
+      </option>
+      <option name="ignoredPackages">
+        <list>
+          <option value="io.netty:netty-all:4.1.107.Final" />
+          <option value="com.azure:azure-identity:1.10.1" />
+          <option value="com.google.protobuf:protobuf-java:3.24.0" />
+          <option value="com.nimbusds:nimbus-jose-jwt:9.30.2" />
+          <option value="commons-beanutils:commons-beanutils:1.7.0" />
+          <option value="commons-collections:commons-collections:3.2.1" />
+          <option value="commons-net:commons-net:3.1" />
+          <option value="io.airlift:aircompressor:0.21" />
+          <option value="log4j:log4j:1.2.17" />
+          <option value="org.apache.avro:avro:1.11.1" />
+          <option value="org.apache.hadoop:hadoop-common:2.7.0" />
+          <option value="org.apache.hadoop:hadoop-yarn-server-common:2.7.0" />
+          <option value="org.apache.zookeeper:zookeeper:3.4.6" />
+          <option value="org.bouncycastle:bcprov-jdk18on:1.76" />
+          <option value="org.codehaus.jackson:jackson-mapper-asl:1.9.13" />
+          <option value="org.xerial.snappy:snappy-java:1.1.8.3" />
+          <option value="xerces:xercesImpl:2.9.1" />
+          <option value="commons-io:commons-io:2.11.0" />
+          <option value="org.apache.commons:commons-compress:1.21" />
+          <option value="cn.hutool:hutool-all:5.8.20" />
+          <option value="commons-io:commons-io:2.13.0" />
+          <option value="org.apache.commons:commons-compress:1.23.0" />
+          <option value="org.bouncycastle:bcprov-jdk15on:1.70" />
+          <option value="org.bouncycastle:bcprov-jdk18on:1.73" />
+          <option value="com.fasterxml.jackson.core:jackson-databind:2.13.0" />
+        </list>
+      </option>
+      <option name="ignoredReasons">
+        <list>
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

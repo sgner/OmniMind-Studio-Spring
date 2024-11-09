@@ -43,7 +43,7 @@ public class FileHandle {
             if(type.contains("image")){
                 ChatResponse response = openAiChatModel
                         .call(new Prompt(List.of(new UserMessage(Constants.FILE_DESCRIPTION_PROMPT, new Media(MimeTypeUtils.parseMimeType(FileUtil.detectFileType(file)), convertMultipartFileToResource(file)))),
-                                OpenAiChatOptions.builder().withModel(model).build()));
+                                OpenAiChatOptions.builder().withHttpHeaders(Map.of("Accept-Encoding","identity")).withModel(model).build()));
                 log.info("回复："+response.getResult().getOutput().getContent());
                 return JSONObject.parseObject(StringTools.extractJsonString(response.getResult().getOutput().getContent()), ReadMediaFile.class);
             }else if(type.contains("video")){

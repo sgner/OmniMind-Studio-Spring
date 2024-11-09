@@ -144,8 +144,9 @@ public class Constants {
             }""";
 public static final String FILE_PRE_TYPE = "该文件类型为: ";
 public static final String FILE_PRE = "该文件内容为: ";
-public  static final String FILE_PRE_PROMPT = "下面是文件提取出的纯文本内容：";
-public static final String FILE_SUF_PROMPT = "根据这个文件信息结合用户问题进行回答。";
+public  static final String FILE_PRE_PROMPT = "这是从当前上传的文件提取出的纯文本内容：";
+public static final String SYSTEM_MESSAGE_PROMPT = "以上是对话的历史记录和相关资料，请参考上面的资料回答用户的问题";
+public static final String FILE_SUF_PROMPT = "根据这个文件信息结合用户问题进行回答，如果前面还有对话的历史文件和资料那么就再结合资料并且以当前上传的这几个文件为主进行回答。";
     public static final String FILE_DESCRIPTION_PROMPT = """
             
             现在请获取出这个文件的信息
@@ -165,5 +166,5 @@ public static final String FILE_SUF_PROMPT = "根据这个文件信息结合用�
     public static final String GET_FILE_CONTENT_PROMPT = "现在假定你作为这个文件的创作者，但是请不要直接说作为创作者等类似的话，请介绍这个文件，并判断是否符合这个预期:";
     public static final List<String> N_MODEL = List.of("gpt-3.5-turbo-16k");
     public static final int MAX_UPLOAD_FILES = 4;
-    public static final String SYSTEM_MESSAGE_PROMPT = "下面是从文件里提取出来的该文件的信息，根据该文件的信息结合后面用户的提问回答相应的问题：";
+//    public static final String SYSTEM_MESSAGE_PROMPT = "下面是从文件里提取出来的该文件的信息，根据该文件的信息结合后面用户的提问回答相应的问题：";
 }

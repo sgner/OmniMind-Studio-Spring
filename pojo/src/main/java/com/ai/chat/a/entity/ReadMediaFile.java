@@ -17,4 +17,8 @@ public class ReadMediaFile implements Serializable {
     private String desc;
     private String prompt;
     private Boolean fetch;
+
+    public static ReadMediaFile defaultReadMediaFile() {
+        return ReadMediaFile.builder().type("").fetch(false).desc("").prompt("").build();
+    }
 }
