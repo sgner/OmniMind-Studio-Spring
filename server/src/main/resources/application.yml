@@ -78,6 +78,9 @@ mybatis-plus:
 com:
   ai:
     chat:
+      suno:
+        gcui:
+          base-url: https://suno-api-six-pearl.vercel.app
       jwt:
         secret-key: litianci0223799
         ttl: 36000000

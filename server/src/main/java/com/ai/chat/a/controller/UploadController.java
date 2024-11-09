@@ -1,10 +1,10 @@
 package com.ai.chat.a.controller;
 
 import cn.hutool.core.util.IdUtil;
-import com.ai.chat.a.api.dto.GenerateLyricsPromptDTO;
-import com.ai.chat.a.api.dto.GenerateSongPromptDTO;
-import com.ai.chat.a.api.dto.InspirationModePromptDTO;
-import com.ai.chat.a.api.util.Request;
+import com.ai.chat.a.api.aiCoreAPI.dto.GenerateLyricsPromptDTO;
+import com.ai.chat.a.api.aiCoreAPI.util.Request;
+import com.ai.chat.a.api.gcuiArtAPI.dto.SunoFastDTO;
+import com.ai.chat.a.api.gcuiArtAPI.util.RequestGcui;
 import com.ai.chat.a.constant.Constants;
 import com.ai.chat.a.dto.MessageSendDTO;
 import com.ai.chat.a.entity.ReadMediaFile;
@@ -56,6 +56,7 @@ public class UploadController {
     private final  AVectorDB aVectorDB;
     private final UserDocumentService userDocumentService;
     private final Request request;
+    private final RequestGcui requestGcui;
     private final AtomicBoolean shouldTerminate = new AtomicBoolean(false);
 
     //TODO 逻辑复杂，拆分代码
@@ -358,11 +359,12 @@ public class UploadController {
         return R.success(showUploadFileList);
     }
     @PostMapping("/rag/test")
-    public R test(@RequestParam MultipartFile file) {
+    public R test() {
 //        aVectorDB.addDocument(file.getResource());
 //        UserIdea userIdea = JSONStructuredOutput.userIdeaOutput("一段动听的音乐，激情的金属声,是一个电影片段");
-          request.lyricsRequest(GenerateLyricsPromptDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
+//          request.lyricsRequest(GenerateLyricsPromptDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
 //        request.songRequest(InspirationModePromptDTO.builder().gpt_description_prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
-        return R.success();
+          requestGcui.GenerateSongRequest(SunoFastDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
+          return R.success();
     }
 }

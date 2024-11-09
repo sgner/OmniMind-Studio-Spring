@@ -1,9 +1,8 @@
 package com.ai.chat.a.mq;
 
-import com.ai.chat.a.api.response.*;
-import com.ai.chat.a.api.util.Request;
+import com.ai.chat.a.api.aiCoreAPI.response.*;
+import com.ai.chat.a.api.aiCoreAPI.util.Request;
 import groovy.util.logging.Slf4j;
-import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
