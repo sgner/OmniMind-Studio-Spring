@@ -1,5 +1,4 @@
 package com.ai.chat.a.api.gcuiArtAPI.dto;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;

@@ -286,5 +286,8 @@ public class UserController{
                .page(mpPageDefaultSortByLike);
        return R.success(PageDTO.of(commentsPage,Comments.class));
    }
-
+   @PostMapping("/wxLogin")
+    public R wxLogin(){
+        return R.success();
+   }
 }

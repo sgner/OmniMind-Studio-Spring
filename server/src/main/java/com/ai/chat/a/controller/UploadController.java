@@ -55,7 +55,6 @@ public class UploadController {
     private final UserService userService;
     private final  AVectorDB aVectorDB;
     private final UserDocumentService userDocumentService;
-    private final Request request;
     private final RequestGcui requestGcui;
     private final AtomicBoolean shouldTerminate = new AtomicBoolean(false);
 
@@ -358,13 +357,19 @@ public class UploadController {
         }
         return R.success(showUploadFileList);
     }
-    @PostMapping("/rag/test")
-    public R test() {
-//        aVectorDB.addDocument(file.getResource());
-//        UserIdea userIdea = JSONStructuredOutput.userIdeaOutput("一段动听的音乐，激情的金属声,是一个电影片段");
-//          request.lyricsRequest(GenerateLyricsPromptDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
-//        request.songRequest(InspirationModePromptDTO.builder().gpt_description_prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
-          requestGcui.GenerateSongRequest(SunoFastDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
-          return R.success();
-    }
+//    @PostMapping("/rag/test")
+//    public R test() {
+////        aVectorDB.addDocument(file.getResource());
+////        UserIdea userIdea = JSONStructuredOutput.userIdeaOutput("一段动听的音乐，激情的金属声,是一个电影片段");
+////          request.lyricsRequest(GenerateLyricsPromptDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
+////        request.songRequest(InspirationModePromptDTO.builder().gpt_description_prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
+//          requestGcui.GenerateSongRequest(SunoFastDTO.builder().prompt("孤独之旅").build(),ThreadLocalUtil.get(),"5ad381d9faef1d59864fac10a9194e38");
+//          return R.success();
+//    }
+//    @GetMapping("/test")
+//    public R test2(){
+//        requestGcui.getGenerateSongRequest("7711c6ad-5487-49dc-80e2-19b56468a94a",0,ThreadLocalUtil.get(),"5ad381d9faef1d59864fac10a9194e38");
+//        return R.success();
+//    }
+
 }

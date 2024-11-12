@@ -1,6 +1,7 @@
 package com.ai.chat.a.enums;
 
 public enum MessageTypeEnum {
+    SUNO_AUDIO(14,"","suno音乐生成成功"),
     INIT(0, "", "连接WS获取信息"),
     CREATE_SESSION(13, "", "创建会话"),
     ADD_FRIEND(1, "", "添加机器人打招呼消息"),

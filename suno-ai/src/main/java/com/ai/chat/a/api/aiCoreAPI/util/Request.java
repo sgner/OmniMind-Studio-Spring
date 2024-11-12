@@ -6,7 +6,7 @@ import com.ai.chat.a.api.aiCoreAPI.response.SongResponse;
 import com.ai.chat.a.api.aiCoreAPI.dto.GenerateLyricsPromptDTO;
 import com.ai.chat.a.api.aiCoreAPI.dto.GenerateSongPromptDTO;
 import com.ai.chat.a.api.aiCoreAPI.response.GenerateLyricsResponse;
-import com.ai.chat.a.mq.ProcessHandle;
+import com.ai.chat.a.mq.SunoAicoreProcessSender;
 import com.ai.chat.a.properties.SunoProperties;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class Request {
     @Resource
-    private ProcessHandle processHandle;
+    private SunoAicoreProcessSender sunoAicoreProcessSender;
     private final OkHttpClient client = new OkHttpClient();
     @Resource
     private SunoProperties properties;
@@ -55,7 +55,7 @@ public class Request {
                           String responseBody = response.body().string();
                           log.info("收到响应: {}", responseBody);
                           LyricsResponse lyricsResponse = JSON.parseObject(responseBody, LyricsResponse.class);
-                          processHandle.sendMessage(lyricsResponse);
+                          sunoAicoreProcessSender.sendMessage(lyricsResponse);
                       } else {
                           log.error("Request failed with code: {}", response.code());
                       }
@@ -93,7 +93,7 @@ public class Request {
                             String responseBody = response.body().string();
                             log.info("收到响应: {}", responseBody);
                             SongResponse songResponse = JSON.parseObject(responseBody, SongResponse.class);
-                            processHandle.sendMessage(songResponse);
+                            sunoAicoreProcessSender.sendMessage(songResponse);
                         } else {
                             log.error("Request failed with code: {}", response.code());
                         }
@@ -123,7 +123,7 @@ public class Request {
                     GenerateSongResponse generateSongResponse = JSON.parseObject(processResponse, GenerateSongResponse.class);
                     if(generateSongResponse.getData().getProgress().equals("100%")){
                         // TODO 要将进度返回给前端
-                        processHandle.sendMessage(generateSongResponse);
+                        sunoAicoreProcessSender.sendMessage(generateSongResponse);
                     }else {
                         checkProgressWithDelaySong(id, 1300);
                         log.info("正在生成歌曲({})......",generateSongResponse.getData().getProgress());
@@ -157,7 +157,7 @@ public class Request {
                         GenerateLyricsResponse generateLyricsResponse = JSON.parseObject(processResponse, GenerateLyricsResponse.class);
                         if(generateLyricsResponse.getData().getProgress().equals("100%")){
                             // TODO 要将进度返回给前端，并且调用接口生成歌曲
-                            processHandle.sendMessage(generateLyricsResponse);
+                            sunoAicoreProcessSender.sendMessage(generateLyricsResponse);
                         }else {
                               checkProgressWithDelay(id, 1000);
                               log.info("正在生成歌词({})......",generateLyricsResponse.getData().getProgress());

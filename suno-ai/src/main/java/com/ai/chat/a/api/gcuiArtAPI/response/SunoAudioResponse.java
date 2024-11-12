@@ -1,21 +1,15 @@
 package com.ai.chat.a.api.gcuiArtAPI.response;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import java.util.List;
 
 @Data
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SunoAudioResponse {
-     private List<ResponseMap> responseMaps;
-     @Data
-     public static class ResponseMap{
-         private String index;
-         private Item item;
-     }
-     @Data
-     public static class Item{
          private String id;
          private String title;
          @JsonProperty("image_url")
@@ -35,6 +29,6 @@ public class SunoAudioResponse {
          private String prompt;
          private String type;
          private String tags;
-     }
+         private Long duration;
 
 }
