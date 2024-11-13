@@ -10,6 +10,6 @@ import java.time.LocalDateTime;
 
 public interface UserService extends IService<User> {
     public void addContact4Robot(String userId);
-    public void subscribeRobot(String userId, String robotId, LocalDateTime endTime);
+    public Session subscribeRobot(String userId, String robotId, LocalDateTime endTime);
     public Session newSession(String robotId);
 }

@@ -29,7 +29,8 @@
         <module>spring-ai-server</module>
 		<module>suno-ai</module>
 		<module>stable-diffusion</module>
-	</modules>
+        <module>lumalabs-ai</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>

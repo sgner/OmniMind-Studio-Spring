@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="pojo" />
+        <module name="lumalabs-ai" />
         <module name="server" />
         <module name="stable-diffusion" />
         <module name="common" />
@@ -21,6 +22,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="a-chat-ai-spring" options="" />
       <module name="common" options="-parameters" />
+      <module name="lumalabs-ai" options="-parameters" />
       <module name="pojo" options="-parameters" />
       <module name="server" options="-parameters" />
       <module name="spring-ai-server" options="-parameters" />

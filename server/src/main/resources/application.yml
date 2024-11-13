@@ -78,6 +78,8 @@ mybatis-plus:
 com:
   ai:
     chat:
+      luma:
+        base-url: https://api.lumalabs.ai/dream-machine/v1
       suno:
         gcui:
           base-url: https://suno-api-six-pearl.vercel.app

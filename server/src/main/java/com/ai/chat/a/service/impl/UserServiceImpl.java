@@ -112,7 +112,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void subscribeRobot(String userId,String robotId,LocalDateTime endTime){
+    public Session subscribeRobot(String userId,String robotId,LocalDateTime endTime){
         Robot robot = robotService.getById(robotId);
         if(robot.getStatus()==RobotStatusEnum.OFFLINE.getStatus()){
             throw new RuntimeException("机器人已下线");
@@ -122,7 +122,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(userSubscribe!=null){
             throw new RuntimeException("您已订阅过该机器人");
         }
-
         Subscribe subscribe = Subscribe.builder()
                 .userId(userId)
                 .robotId(robotId)
@@ -133,53 +132,76 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .build();
         subscribeService.save(subscribe);
         String sessionId = StringTools.getChatSessionId4User(new String[]{userId, robotId});
-        Session session = Session.builder()
-                .sessionId(sessionId)
-                .userId(userId)
-                .robotType(UserRobotTypeEnum.ROBOT.getType())
-                .robotId(robotId)
-                .status(SessionStatusEnum.NORMAL.getStatus())
-                .robotName(robot.getName())
-                .lastMessage(Constants.SUBSCRIBE_SUCCESS)
-                .lastTime(LocalDateTime.now()).build();
-        sessionService.save(session);
-        User user = this.getById(userId);
-        Conversations conversations = Conversations.builder()
-                .userId(userId)
-                .sessionId(sessionId)
-                .userName(user.getUsername())
-                .createTime(LocalDateTime.now())
-                .build();
-        conversationsService.save(conversations);
+        Session resultSession = Session.builder().build();
+        if(robot.getCategoryId() != 6&& robot.getCategoryId()!= 3){
+            Session session = Session.builder()
+                    .sessionId(sessionId)
+                    .userId(userId)
+                    .robotType(UserRobotTypeEnum.ROBOT.getType())
+                    .robotId(robotId)
+                    .status(SessionStatusEnum.NORMAL.getStatus())
+                    .robotName(robot.getName())
+                    .lastMessage(Constants.SUBSCRIBE_SUCCESS)
+                    .lastTime(LocalDateTime.now()).build();
+            sessionService.save(session);
+            resultSession = session;
+            User user = this.getById(userId);
+            Conversations conversations = Conversations.builder()
+                    .userId(userId)
+                    .sessionId(sessionId)
+                    .userName(user.getUsername())
+                    .createTime(LocalDateTime.now())
+                    .build();
+            conversationsService.save(conversations);
 
-        Answers answers = Answers.builder()
-                .answer(Constants.SUBSCRIBE_SUCCESS)
-                .answerType(MessageTypeEnum.CHAT.getType())
-                .answerRobotId(robotId).createTime(LocalDateTime.now())
-                .conversationId(conversations.getId())
-                .answerRobotType(UserRobotTypeEnum.ROBOT.getType())
-                .answerTargetUserId(userId)
-                .status(MessageStatusEnum.SENDED.getStatus())
-                .answerRobotName(robot.getName())
-                .sessionId(sessionId)
-                .conversationId(conversations.getId())
-                .build();
-        answersService.save(answers);
+            Answers answers = Answers.builder()
+                    .answer(Constants.SUBSCRIBE_SUCCESS)
+                    .answerType(MessageTypeEnum.CHAT.getType())
+                    .answerRobotId(robotId).createTime(LocalDateTime.now())
+                    .conversationId(conversations.getId())
+                    .answerRobotType(UserRobotTypeEnum.ROBOT.getType())
+                    .answerTargetUserId(userId)
+                    .status(MessageStatusEnum.SENDED.getStatus())
+                    .answerRobotName(robot.getName())
+                    .sessionId(sessionId)
+                    .conversationId(conversations.getId())
+                    .build();
+            answersService.save(answers);
 
-        // TODO 添加extendData
-        MessageSendDTO messageSendDTO = MessageSendDTO.builder()
-                .sendUserId(robotId)
-                .messageType(MessageTypeEnum.CHAT.getType())
-                .contactName(user.getUsername())
-                .messageContent(Constants.SUBSCRIBE_SUCCESS)
-                .sendUserNickName(robot.getName())
-                .lastMessage(Constants.SUBSCRIBE_SUCCESS)
-                .sessionId(sessionId)
-                .sendTime(LocalDateTime.now())
-                .contactType(UserRobotTypeEnum.ROBOT.getType())
-                .contactId(user.getId())
-                .build();
-        messageHandle.sendMessage(messageSendDTO);
+            // TODO 添加extendData
+            MessageSendDTO messageSendDTO = MessageSendDTO.builder()
+                    .sendUserId(robotId)
+                    .messageType(MessageTypeEnum.CHAT.getType())
+                    .contactName(user.getUsername())
+                    .messageContent(Constants.SUBSCRIBE_SUCCESS)
+                    .sendUserNickName(robot.getName())
+                    .lastMessage(Constants.SUBSCRIBE_SUCCESS)
+                    .sessionId(sessionId)
+                    .sendTime(LocalDateTime.now())
+                    .contactType(UserRobotTypeEnum.ROBOT.getType())
+                    .contactId(user.getId())
+                    .build();
+            messageHandle.sendMessage(messageSendDTO);
+        }else{
+            Session session = Session.builder()
+                    .sessionId(sessionId)
+                    .robotName(robot.getName())
+                    .userId(userId)
+                    .robotId(robotId)
+                    .robotType(robot.getCategoryId())
+                    .status(SessionStatusEnum.NORMAL.getStatus())
+                    .lastTime(LocalDateTime.now())
+                    .build();
+            sessionService.save(session);
+            resultSession = session;
+            MessageSendDTO messageSendDTO = MessageSendDTO.builder()
+                    .contactId(userId)
+                    .messageType(MessageTypeEnum.TOOL_MODEL.getType())
+                    .extendData(session)
+                    .build();
+            messageHandle.sendMessage(messageSendDTO);
+        }
+        return resultSession;
     }
 
     @Override

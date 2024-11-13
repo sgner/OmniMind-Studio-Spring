@@ -125,8 +125,8 @@ public class UserController{
     }
     @PostMapping("/subscribe")
     public R subscribe(@RequestBody UserSubscribeDTO userSubscribeDTO){
-        userService.subscribeRobot(ThreadLocalUtil.get(),userSubscribeDTO.getRobotId(),userSubscribeDTO.getEndTime());
-        return R.success();
+        Session session = userService.subscribeRobot(ThreadLocalUtil.get(), userSubscribeDTO.getRobotId(), userSubscribeDTO.getEndTime());
+        return R.success(session);
     }
    @GetMapping("/uploadData/{sessionId}")
     public R getUploadData(@PathVariable String sessionId){
