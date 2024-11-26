@@ -24,19 +24,15 @@ public class PlayerUtil {
     private String url;
     private String appId;
     private String secret;
-    private String playerType;
-    private String desc;
 
     private final static OkHttpClient client = new OkHttpClient();
 
     private static final String suffixUrl = "/open/player";
 
-    public PlayerUtil(String url, String appid, String apiSecret, String playerType, String desc) {
+    public PlayerUtil(String url, String appid, String apiSecret) {
           this.url = url;
           this.appId = appid;
           this.secret = apiSecret;
-          this.playerType = playerType;
-          this.desc = desc;
     }
 
     /**
@@ -73,14 +69,16 @@ public class PlayerUtil {
      * @param playerName
      * @throws Exception
      */
-    public String register(String playerName) throws Exception {
-       String registerUrl = url + suffixUrl + "/register";
+    public String register(String playerName,String playerType,String desc,String senderIdentity) throws Exception {
+        String registerUrl = url + suffixUrl + "/register";
         log.info("url:" + registerUrl);
         PlayerDto playerDto = PlayerDto.builder()
                 .appId(appId)
                 .playerName(playerName)
                 .playerType(playerType)
-                .description(desc).build();
+                .description(desc)
+                .senderIdentity(senderIdentity)
+                .build();
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),JSON.toJSONString(playerDto));
         long ts = System.currentTimeMillis();
         Request request = new Request.Builder()
@@ -107,8 +105,8 @@ public class PlayerUtil {
      * @param playerName
      * @throws Exception
      */
-    public void modify(String appId, String playerId, String playerName) throws Exception {
-       String modifyUrl= url + suffixUrl + "/modify";
+    public void modify(String appId, String playerId, String playerName,String playerType,String desc) throws Exception {
+        String modifyUrl= url + suffixUrl + "/modify";
         System.out.println("url:" + modifyUrl);
         PlayerDto playerDto = PlayerDto.builder()
                 .playerId(playerId)

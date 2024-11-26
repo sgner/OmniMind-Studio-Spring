@@ -15,5 +15,6 @@ public class PlayerDto {
     private String playerId;
     private String playerName;
     private String playerType;
+    private String senderIdentity;
     private String description;
 }

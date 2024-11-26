@@ -38,7 +38,7 @@ public class RequestGcui {
             .readTimeout(30,TimeUnit.SECONDS)
             .writeTimeout(30,TimeUnit.SECONDS)
             .build();
-    public void GenerateSongRequest(SunoDTO sunoDTO, String userId, String sessionId){
+    public void GenerateSongRequest(SunoDTO sunoDTO, String userId){
         String url = "/api/generate";
         if(sunoDTO instanceof SunoCustomDTO){
             url = "/api/custom_generate";
@@ -59,7 +59,7 @@ public class RequestGcui {
                 log.info(sunoAudioResponses.toString());
                 List<SunoAudioResponseDTO> sunoAudioResponseDTOS = BeanUtil.copyToList(sunoAudioResponses, SunoAudioResponseDTO.class);
                 sunoAudioResponseDTOS.forEach(item ->{
-                     item.setSessionId(sessionId);
+                     item.setSessionId(sunoDTO.getSessionId());
                      item.setUserId(userId);
                 });
                 sunoGcuiProcessSender.sendMessage(sunoAudioResponseDTOS);
@@ -90,13 +90,14 @@ public void getGenerateSongRequest(@Nullable String ids,int retryCount,String us
                  List<SunoAudioResponse> sunoAudioResponses = JSONObject.parseArray(getSongResponse, SunoAudioResponse.class);
                  log.info(sunoAudioResponses.toString());
                  if(!sunoAudioResponses.isEmpty()){
-                     List<SunoAudioResponse> list = sunoAudioResponses.stream().filter(item -> !item.getAudioUrl().isEmpty()).toList();
-                     if(list.isEmpty()&& retryCount <10){
-                           checkProgressWithDelaySong(ids,3000,retryCount+1,userId,sessionId);
+                     List<SunoAudioResponse> list = sunoAudioResponses.stream()
+                             .filter(item->item.getAudioUrl().startsWith("https://cdn1.suno.ai/")).toList();
+                     if((list.isEmpty() || list.size()<2)&& retryCount <15){
+                           checkProgressWithDelaySong(ids,9000,retryCount+1,userId,sessionId);
                      }else {
-                         if(retryCount >= 10){
+                         if(retryCount >= 15){
                               log.info("超时");
-                              // TODO 反馈
+                              sunoGcuiProcessSender.endProcess(null);
                          }else {
                               log.info("成功");
                              log.info(sunoAudioResponses.toString());
@@ -129,14 +130,18 @@ public void getGenerateSongRequest(@Nullable String ids,int retryCount,String us
         String string = response.body().string();
         log.info(string);
     }
-    public void getGeneratedSongRequest(String ids,String userId){
+    public List<SunoAudioResponse> getGeneratedSongRequest(String ids) throws IOException {
+        log.info(ids);
         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(sunoGcuiProperties.getBaseUrl() + "/api/get")).newBuilder();
         urlBuilder.addQueryParameter("ids",ids);
         String url = urlBuilder.build().toString();
         log.info(url);
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(url).build();
-
+                .url(url)
+                .build();
+        Response response = okHttpClient.newCall(request).execute();
+        String result = response.body().string();
+        return JSONObject.parseArray(result, SunoAudioResponse.class);
     }
 
     private void checkProgressWithDelaySong(String id, int delayMillis,int retryCount,String userId,String sessionId){

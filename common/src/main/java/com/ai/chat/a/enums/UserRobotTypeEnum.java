@@ -4,8 +4,8 @@ import com.ai.chat.a.utils.StringTools;
 
 public enum UserRobotTypeEnum {
     ROBOT(0, "R", "机器人"),
-    GROUP(1, "G", "群");
-
+    GROUP(1, "G", "群"),
+    PLAYER(2, "P", "玩家");
     private Integer type;
     private String prefix;
     private String desc;

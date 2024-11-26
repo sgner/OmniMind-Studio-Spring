@@ -1,13 +1,13 @@
 package com.ai.chat.a.api.gcuiArtAPI.dto;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.annotation.Bean;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SunoFastDTO extends SunoDTO{
     private String prompt;
 }

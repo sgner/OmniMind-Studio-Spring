@@ -111,12 +111,6 @@ xf:
         interactionType: "obs"
       player:
         url: https://ai-character.xfyun.cn/api
-        playerType: 机智的玩家
-        desc: 穿越时空的旅行者
-      agent:
-        name: 慈禧太后
-        type: 傲娇
-        desc: 她是晚清帝国的慈禧太后
   list:
     black_list:
     white_list:

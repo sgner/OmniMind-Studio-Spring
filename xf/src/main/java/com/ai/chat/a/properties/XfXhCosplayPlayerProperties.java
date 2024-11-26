@@ -10,7 +10,4 @@ import org.springframework.stereotype.Component;
 public class XfXhCosplayPlayerProperties {
     private String interactiveUrl;
     private String url;
-    private String playerType;
-    private String desc;
-
 }

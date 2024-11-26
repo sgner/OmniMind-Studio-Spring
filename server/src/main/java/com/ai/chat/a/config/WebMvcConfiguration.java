@@ -21,6 +21,8 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .addPathPatterns("/chat/**")
                 .addPathPatterns("/robot/**")
                 .addPathPatterns("/upload/**")
+                .addPathPatterns("/suno/**")
+                .addPathPatterns("/xf/**")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/user/register");
     }

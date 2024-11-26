@@ -2,7 +2,9 @@ package com.ai.chat.a.api.gcuiArtAPI.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
@@ -17,7 +19,10 @@ import lombok.experimental.SuperBuilder;
         @JsonSubTypes.Type(value = SunoCustomDTO.class, name = "sunoCustomDTO"),
         @JsonSubTypes.Type(value = SunoFastDTO.class,name="sunoFastDTO"),
 })
+@NoArgsConstructor
+@AllArgsConstructor
 public class SunoDTO {
+    private String sessionId;
     @JsonProperty("make_instrumental")
     private Boolean makeInstrumental = false;
     @JsonProperty("wait_audio")

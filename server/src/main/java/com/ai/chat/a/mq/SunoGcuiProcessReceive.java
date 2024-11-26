@@ -9,8 +9,10 @@ import com.ai.chat.a.dto.MessageSendDTO;
 import com.ai.chat.a.enums.MessageTypeEnum;
 import com.ai.chat.a.po.UserSunoAudio;
 import com.ai.chat.a.service.UserSunoAudioService;
+import com.ai.chat.a.utils.ThreadLocalUtil;
 import com.ai.chat.a.websocket.ChannelContextUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -29,6 +31,7 @@ public class SunoGcuiProcessReceive {
     private final RequestGcui requestGcui;
     private final ChannelContextUtils channelContextUtils;
     private final static String QUEUE_NAME = "suno.gcui.queue";
+    private final static String QUEUE_NAME_LYRICS = "suno.gcui.queue.lyrics";
     private final static String QUEUE_NAME_END = "suno.gcui.queue.end";
     private final static String ROUTE_KEY_END = "end";
     private final static String ROUTE_KEY = "song";
@@ -49,6 +52,19 @@ public class SunoGcuiProcessReceive {
             log.info("收到消息：{}", JSONObject.toJSONString(message));
             log.info("开始获取生成结果");
             String id = String.join(",", ids);
+
+            List<UserSunoAudio> userSunoAudios = BeanUtil.copyToList(message, UserSunoAudio.class);
+            log.info(userSunoAudios.toString());
+            try {
+                userSunoAudios.forEach(userSunoAudio -> {
+                    userSunoAudio.setCreateTime(LocalDateTime.now());
+                    userSunoAudio.setUserId(message.get(0).getUserId());
+                });
+                userSunoAudioService.saveBatch(userSunoAudios);
+            }catch (Exception e){
+                e.printStackTrace();
+                log.error("保存失败！");
+            }
             SunoAudioResponseDTO sunoAudioResponseDTO = message.get(0);
             requestGcui.getGenerateSongRequest(id,0,sunoAudioResponseDTO.getUserId(),sunoAudioResponseDTO.getSessionId());
         }
@@ -56,7 +72,7 @@ public class SunoGcuiProcessReceive {
 
     @RabbitListener(
             bindings = @QueueBinding(
-                    value = @Queue(name =QUEUE_NAME,durable = "true"),
+                    value = @Queue(name =QUEUE_NAME_LYRICS,durable = "true"),
                     exchange = @Exchange(name = EXCHANGE_NAME,type = ExchangeTypes.DIRECT),
                     key= {ROUTE_KEY_LYRICS}
             )
@@ -78,13 +94,18 @@ public class SunoGcuiProcessReceive {
         try{
             userSunoAudios.forEach(userSunoAudio ->{
                  userSunoAudio.setCreateTime(LocalDateTime.now());
+                 userSunoAudio.setUserId(message.get(0).getUserId());
             });
-            userSunoAudioService.saveBatch(userSunoAudios);
+            log.info(message.get(0).getUserId());
+            userSunoAudioService.updateBatchById(userSunoAudios);
             log.info("完成！");
+            List<UserSunoAudio> list = userSunoAudioService.list(new LambdaQueryWrapper<UserSunoAudio>().eq(UserSunoAudio::getUserId, message.get(0).getUserId()));
+            List<String> ids = list.stream().map(UserSunoAudio::getId).toList();
+            List<SunoAudioResponse> generatedSongRequest = requestGcui.getGeneratedSongRequest("");
             MessageSendDTO<Object> messageSendDTO = MessageSendDTO.builder()
                     .messageType(MessageTypeEnum.SUNO_AUDIO.getType())
-                    .extendData(message)
                     .contactId(message.get(0).getUserId())
+                    .extendData(generatedSongRequest)
                     .build();
             channelContextUtils.sendMessage(messageSendDTO);
         }catch (Exception e){

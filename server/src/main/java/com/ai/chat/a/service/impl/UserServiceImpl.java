@@ -133,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         subscribeService.save(subscribe);
         String sessionId = StringTools.getChatSessionId4User(new String[]{userId, robotId});
         Session resultSession = Session.builder().build();
-        if(robot.getCategoryId() != 6&& robot.getCategoryId()!= 3){
+        if(robot.getCategoryId() != 6&& robot.getCategoryId()!= 3 && robot.getCategoryId() != 2){
             Session session = Session.builder()
                     .sessionId(sessionId)
                     .userId(userId)
@@ -182,7 +182,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     .contactId(user.getId())
                     .build();
             messageHandle.sendMessage(messageSendDTO);
-        }else{
+        }else if(robot.getCategoryId() != 2){
             Session session = Session.builder()
                     .sessionId(sessionId)
                     .robotName(robot.getName())
@@ -197,6 +197,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             MessageSendDTO messageSendDTO = MessageSendDTO.builder()
                     .contactId(userId)
                     .messageType(MessageTypeEnum.TOOL_MODEL.getType())
+                    .extendData(session)
+                    .build();
+            messageHandle.sendMessage(messageSendDTO);
+        }else{
+             // TODO 为角色扮演创建session工作区，向前端发送消息
+            Session session = Session.builder()
+                    .sessionId(sessionId)
+                    .robotName(robot.getName())
+                    .userId(userId)
+                    .robotId(robotId)
+                    .robotType(robot.getCategoryId())
+                    .status(SessionStatusEnum.NORMAL.getStatus())
+                    .lastTime(LocalDateTime.now())
+                    .build();
+            sessionService.save(session);
+            resultSession = session;
+            MessageSendDTO messageSendDTO = MessageSendDTO.builder()
+                    .contactId(userId)
+                    .messageType(MessageTypeEnum.XF_COS.getType())
                     .extendData(session)
                     .build();
             messageHandle.sendMessage(messageSendDTO);

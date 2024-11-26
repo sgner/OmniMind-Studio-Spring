@@ -15,7 +15,6 @@ public class XfXhInteractionConfig {
                 ,xfProperties.getAppid()
                 ,xfProperties.getApiSecret()
                 ,xfXhCosplayPlayerProperties.getUrl()
-                ,"学生遇到了问题，作为助教进行辅导"
                 ,xfXhCosplayInteractionProperties.getInteractionType());
     }
 }

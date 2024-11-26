@@ -13,9 +13,7 @@ public class XfXhPlayerUtilConfig {
         return new PlayerUtil(
                 xfXhCosplayPlayerProperties.getUrl(),
                 xfProperties.getAppid(),
-                xfProperties.getApiSecret(),
-                xfXhCosplayPlayerProperties.getPlayerType(),
-                xfXhCosplayPlayerProperties.getDesc());
+                xfProperties.getApiSecret());
     }
 
 }

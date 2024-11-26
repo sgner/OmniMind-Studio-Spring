@@ -38,6 +38,7 @@
           <option value="a-chat-ai-spring" />
           <option value="a-chat-ai-spring" />
           <option value="a-chat-ai-spring" />
+          <option value="server" />
         </list>
       </option>
       <option name="ignoredPackages">
@@ -67,10 +68,12 @@
           <option value="org.bouncycastle:bcprov-jdk15on:1.70" />
           <option value="org.bouncycastle:bcprov-jdk18on:1.73" />
           <option value="com.fasterxml.jackson.core:jackson-databind:2.13.0" />
+          <option value="cn.hutool:hutool-all:5.8.20" />
         </list>
       </option>
       <option name="ignoredReasons">
         <list>
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />

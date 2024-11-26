@@ -1,18 +1,10 @@
 package com.ai.chat.a.mq;
 
 import com.ai.chat.a.api.gcuiArtAPI.dto.SunoAudioResponseDTO;
-import com.ai.chat.a.api.gcuiArtAPI.response.SunoAudioResponse;
 import com.ai.chat.a.api.gcuiArtAPI.response.SunoLyricsResponse;
-import com.ai.chat.a.api.gcuiArtAPI.util.RequestGcui;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.ExchangeTypes;
-import org.springframework.amqp.rabbit.annotation.Exchange;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

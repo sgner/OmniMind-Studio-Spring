@@ -26,4 +26,5 @@ public class Session {
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private LocalDateTime lastTime;
     private Integer robotNumber;
+    private String userName;
 }
