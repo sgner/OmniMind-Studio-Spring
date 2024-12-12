@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PlayDto {
     private String prompt; // 提示词
-    private String playerId; // 玩家id
     private String agentId;
+    private String sessionId;
 }

@@ -17,6 +17,4 @@ public class UserPlayerAgent {
      private String playerName;
      private String agentName;
      private String sessionId;
-     private String playerAvatar;
-     private String agentAvatar;
 }

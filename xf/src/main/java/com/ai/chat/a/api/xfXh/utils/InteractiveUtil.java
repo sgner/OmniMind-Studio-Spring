@@ -3,11 +3,16 @@ package com.ai.chat.a.api.xfXh.utils;
 import cn.hutool.json.JSONUtil;
 import com.ai.chat.a.api.xfXh.dto.InteractiveRequest;
 import com.ai.chat.a.api.xfXh.dto.InteractiveResponse;
+import com.ai.chat.a.dto.CosResponseDTO;
+import com.ai.chat.a.mq.CosResponseSender;
+import com.ai.chat.a.po.Player;
+import com.ai.chat.a.po.Role;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.ai.chat.a.api.xfXh.dto.InteractiveDto;
 import com.ai.chat.a.api.xfXh.response.ResponseMsg;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +32,8 @@ public class  InteractiveUtil {
 
     private static final String suffixUrl = "/open/interactive";
     private final static OkHttpClient client = new OkHttpClient();
+    @Resource
+    private CosResponseSender cosResponseSender;
 
     /**
      * 玩家人格会话
@@ -36,10 +43,10 @@ public class  InteractiveUtil {
      * @param agentId
      * @param chatId
      * @param preChatId
-     * @param text
+     * @param context
      * @param secret
      */
-    public StringBuffer chat(String url, String appId, String userId, String agentId, String chatId, String preChatId, List<InteractiveRequest.Text> text, String secret) {
+    public StringBuffer chat(String url, String appId, String userId, String agentId, String chatId, String preChatId, List<InteractiveRequest.Text> context, String secret,Role role,Player player,String sessionId,String playUserId) {
         //构造请求
         InteractiveRequest interactiveRequest = new InteractiveRequest();
 
@@ -62,7 +69,7 @@ public class  InteractiveUtil {
         //设置payload
         InteractiveRequest.Payload payload = new InteractiveRequest.Payload();
         InteractiveRequest.Message message = new InteractiveRequest.Message();
-        message.setText(text);
+        message.setText(context);
         payload.setMessage(message);
         interactiveRequest.setPayload(payload);
 
@@ -102,6 +109,7 @@ public class  InteractiveUtil {
                         if (response.getHeader().getStatus() == 2) {
                             log.info("回答结束，回答内容：" + buffer);
                             log.info("本轮问答用量：" + JSONUtil.toJsonStr(response.getPayload().getUsage()));
+                            cosResponseSender.sendMessage(CosResponseDTO.builder().context(JSONObject.toJSONString(context)).userId(playUserId).sessionId(sessionId).message(buffer.toString()).player(player).role(role).build());
                             webSocket.close(1000, "websocket finish");
                             okHttpClient.connectionPool().evictAll();
                         }

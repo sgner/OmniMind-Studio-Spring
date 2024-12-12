@@ -20,4 +20,6 @@ public class SessionChatUser {
     private String lastMessage;
     private LocalDateTime lastTime;
     private Integer robotNumber;
+    private String robotAvatar;
+    private String userAvatar;
 }

@@ -10,11 +10,8 @@ import com.ai.chat.a.enums.MessageStatusEnum;
 import com.ai.chat.a.enums.MessageTypeEnum;
 import com.ai.chat.a.enums.UserRobotTypeEnum;
 import com.ai.chat.a.mq.MessageHandle;
-import com.ai.chat.a.po.Answers;
-import com.ai.chat.a.po.Conversations;
-import com.ai.chat.a.po.Session;
+import com.ai.chat.a.po.*;
 import com.ai.chat.a.mapper.SessionMapper;
-import com.ai.chat.a.po.User;
 import com.ai.chat.a.redis.RedisComponent;
 import com.ai.chat.a.service.AnswersService;
 import com.ai.chat.a.service.ConversationsService;
@@ -142,7 +139,6 @@ public class SessionServiceImpl extends ServiceImpl<SessionMapper, Session> impl
                     .fileType(response.getFileType())
                     .createTime(LocalDateTime.now())
                     .answerRobotName(currentSession.getRobotName())
-                    .answerType(currentSession.getRobotType())
                     .sessionId(currentSession.getSessionId())
                     .status(MessageStatusEnum.SENDED.getStatus())
                     .conversationId(conversations.getId())
@@ -171,6 +167,59 @@ public class SessionServiceImpl extends ServiceImpl<SessionMapper, Session> impl
                     .sendUserNickName(answers.getAnswerRobotName())
                     .contactId(user.getId())
                     .build();
+            messageHandle.sendMessage(messageSendDTO);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateSession(String userId,Session currentSession, String question, String response, Player player ,Role role) {
+        try{
+            Conversations conversations = Conversations.builder()
+                    .userName(player.getPlayerName())
+                    .createTime(LocalDateTime.now())
+                    .sessionId(currentSession.getSessionId())
+                    .question(question)
+                    .questionType(MessageTypeEnum.CHAT.getType())
+                    .status(MessageStatusEnum.SENDED.getStatus())
+                    .userId(userId).build();
+            conversationsService.save(conversations);
+            Answers answers = Answers.builder()
+                    .answerType(MessageTypeEnum.CHAT.getType())
+                    .answerRobotType(UserRobotTypeEnum.COSPLAY.getType())
+                    .answerTargetUserId(player.getPlayerId())
+                    .answer(response)
+                    .createTime(LocalDateTime.now())
+                    .answerRobotName(currentSession.getRobotName())
+                    .sessionId(currentSession.getSessionId())
+                    .status(MessageStatusEnum.SENDED.getStatus())
+                    .conversationId(conversations.getId())
+                    .answerRobotId(currentSession.getRobotId())
+                    .build();
+            answersService.save(answers);
+            LambdaUpdateWrapper<Session> sessionLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            LambdaUpdateWrapper<Session> set = sessionLambdaUpdateWrapper
+                    .eq(Session::getSessionId, currentSession.getSessionId())
+                    .eq(Session::getUserId, userId)
+                    .set(Session::getLastMessage, answers.getAnswer())
+                    .set(Session::getLastTime, answers.getCreateTime())
+                    .setSql("no_read_count = no_read_count+1");;
+            this.update(set);
+            MessageDTO message = MessageDTO.builder().question(conversations).answers(List.of(answers)).build();
+            MessageSendDTO<Object> messageSendDTO = MessageSendDTO.builder()
+                    .extendData(message)
+                    .messageType(MessageTypeEnum.CHAT.getType())
+                    .contactType(currentSession.getRobotType())
+                    .sessionId(currentSession.getSessionId())
+                    .lastMessage(answers.getAnswer())
+                    .sendTime(answers.getCreateTime())
+                    .messageContent(answers.getAnswer())
+                    .sendUserId(answers.getAnswerRobotId())
+                    .sendUserNickName(answers.getAnswerRobotName())
+                    .contactId(userId)
+                    .build();
+            log.info("发送消息:{}", messageSendDTO);
             messageHandle.sendMessage(messageSendDTO);
         } catch (Exception e){
             e.printStackTrace();

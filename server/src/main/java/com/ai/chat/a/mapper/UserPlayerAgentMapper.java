@@ -10,4 +10,6 @@ import org.springframework.stereotype.Service;
 public interface UserPlayerAgentMapper extends BaseMapper<UserPlayerAgent> {
     @Select("select count(distinct player_id) from user_player_agent where user_id = #{userId}")
     public Integer countPlayerNum(String userId);
+    @Select("select count(distinct agent_id) from user_player_agent where user_id = #{userId} and player_id = #{playerId}")
+    public Integer countAgentNum(String userId,String playerId);
 }

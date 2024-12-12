@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserIdea {
-    private Boolean generateImage;
-    private Boolean generateVideo;
-    private Boolean generateVoice;
-    private String Style;
-    private String prompt;
+public class ContextText {
+    private String role;
+    private String content;
 }

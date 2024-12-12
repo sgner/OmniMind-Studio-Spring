@@ -27,4 +27,6 @@ public class Session {
     private LocalDateTime lastTime;
     private Integer robotNumber;
     private String userName;
+    private String userAvatar;
+    private String robotAvatar;
 }

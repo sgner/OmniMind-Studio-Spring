@@ -20,9 +20,10 @@ import java.util.Map;
 public class JSONStructuredOutput {
     private final OpenAiChatModel chatModel;
     public UserIdea userIdeaOutput(String idea) {
-        BeanOutputConverter<UserIdea> userIdeaBeanOutputConverter = new BeanOutputConverter<>(UserIdea.class);
-        String format = userIdeaBeanOutputConverter.getFormat();
-        String template = """
+        try{
+            BeanOutputConverter<UserIdea> userIdeaBeanOutputConverter = new BeanOutputConverter<>(UserIdea.class);
+            String format = userIdeaBeanOutputConverter.getFormat();
+            String template = """
           {idea}
           Now please infer whether the above text is requesting the generation of an image, video, or audio, or if it is none of these.
           Note: You can only select one among generating an image, video, or audio; multiple selections like\s
@@ -50,13 +51,16 @@ public class JSONStructuredOutput {
           If it is for generating an image or video, please provide your recommended prompts; the prompts must be in English. Most importantly, you must give the following JSON format text at the end, with no other responses. Again, do not include any other responses; you must provide the following JSON format:
           {format}
         """;
-        PromptTemplate promptTemplate = new PromptTemplate(template, Map.of("idea", idea, "format", format));
-        Prompt prompt = new Prompt(promptTemplate.createMessage(), OpenAiChatOptions.builder()
-                .withModel("gpt-4o-mini")
-                .withHttpHeaders(Map.of("Accept-Encoding","identity"))
-                .build());
-        chatModel.call(prompt);
-        Generation result = chatModel.call(prompt).getResult();
-        return userIdeaBeanOutputConverter.convert(result.getOutput().getContent());
+            PromptTemplate promptTemplate = new PromptTemplate(template, Map.of("idea", idea, "format", format));
+            Prompt prompt = new Prompt(promptTemplate.createMessage(), OpenAiChatOptions.builder()
+                    .withModel("gpt-4o-mini")
+                    .withHttpHeaders(Map.of("Accept-Encoding","identity"))
+                    .build());
+            chatModel.call(prompt);
+            Generation result = chatModel.call(prompt).getResult();
+            return userIdeaBeanOutputConverter.convert(result.getOutput().getContent());
+        }catch (Exception e){
+             return UserIdea.builder().Style("").generateImage(false).generateVideo(false).generateVoice(false).prompt("").build();
+        }
     }
 }

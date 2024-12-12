@@ -74,7 +74,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //增加会话信息
         String sessionId = StringTools.getChatSessionId4User(new String[]{userId, robotId});
 
+        Robot robot = robotService.getOne(new LambdaQueryWrapper<Robot>().eq(Robot::getId, robotId));
+        User user = this.getById(userId);
+
         Session session = Session.builder()
+                .robotAvatar(robot.getAvatar())
+                .userAvatar(user.getAvatar())
                 .lastMessage(senMessage)
                 .status(SessionStatusEnum.NORMAL.getStatus())
                 .sessionId(sessionId)
@@ -87,7 +92,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         sessionService.save(session);
         //增加聊天消息
-        User user = this.getById(userId);
         Conversations conversations = Conversations.builder()
                 .sessionId(sessionId)
                 .questionType(MessageTypeEnum.CHAT.getType())
@@ -134,7 +138,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String sessionId = StringTools.getChatSessionId4User(new String[]{userId, robotId});
         Session resultSession = Session.builder().build();
         if(robot.getCategoryId() != 6&& robot.getCategoryId()!= 3 && robot.getCategoryId() != 2){
+            User user = this.getById(userId);
             Session session = Session.builder()
+                    .userAvatar(user.getAvatar())
+                    .robotAvatar(robot.getAvatar())
                     .sessionId(sessionId)
                     .userId(userId)
                     .robotType(UserRobotTypeEnum.ROBOT.getType())
@@ -145,7 +152,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     .lastTime(LocalDateTime.now()).build();
             sessionService.save(session);
             resultSession = session;
-            User user = this.getById(userId);
             Conversations conversations = Conversations.builder()
                     .userId(userId)
                     .sessionId(sessionId)
@@ -229,6 +235,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = this.getById(ThreadLocalUtil.get());
         String sessionId = StringTools.getChatSessionId4User(new String[]{ThreadLocalUtil.get(),robotId});
         Session session = Session.builder()
+                .userAvatar(user.getAvatar())
+                .robotAvatar(robot.getAvatar())
                 .sessionId(sessionId)
                 .robotId(robotId)
                 .robotName(robot.getName())

@@ -97,7 +97,16 @@ public class AgentUtil {
         }
         return responseMsg.getData();
     }
-    public void editAgentCharacter(String playerId, String agentId,String agentName,String agentType,String description) throws Exception {
+    public void editAgentCharacter(String playerId,
+                                   String agentId,
+                                   String agentName,
+                                   String agentType,
+                                   String description,
+                                   String identity,
+                                   String personalityDescription,
+                                   String hobby,
+                                   String keyPersonality,
+                                   String mission) throws Exception {
         String editUrl = url + suffixUrl + "/edit-character";
         log.info("url:" + editUrl);
         AgentCharactersDto charactersDto = AgentCharactersDto.builder()
@@ -106,7 +115,13 @@ public class AgentUtil {
                 .playerId(playerId)
                 .agentName(agentName)
                 .agentType(agentType)
-                .description(description).build();
+                .description(description)
+                .identity(identity)
+                .personalityDescription(personalityDescription)
+                .hobby(hobby)
+                .keyPersonality(keyPersonality)
+                .mission(mission)
+                .build();
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSONObject.toJSONString(charactersDto));
         long ts = System.currentTimeMillis();
         Request request = new Request.Builder()
@@ -146,10 +161,10 @@ public class AgentUtil {
         }
     }
 
-    public void deleteAgentCharacter(String agentId) throws Exception {
+    public void deleteAgentCharacter(String agentId,String agentName) throws Exception {
         String deleteUrl = url + suffixUrl + "/delete-character";
         StringBuilder sb = new StringBuilder();
-        sb.append(deleteUrl).append("?appId=").append(appId).append("&agentId=").append(agentId);
+        sb.append(deleteUrl).append("?appId=").append(appId).append("&agentId=").append(agentId).append("&agentName=").append(agentName);
         log.info("url:" + sb);
         long ts = System.currentTimeMillis();
         Request request = new Request.Builder()

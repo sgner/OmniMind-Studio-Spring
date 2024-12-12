@@ -6,11 +6,13 @@ import lombok.Data;
 @Data
 @Builder
 public class PlayCustomizeDto {
+    private String playerId; // 玩家id
+    private String agentId; // 角色id
     private String playerAvatar; // 玩家头像
     private String agentAvatar; // 角色头像
     private String playerName; // 玩家名称
     private String playerType; // 玩家类型
-    private String playerDescription; // 玩家描述
+    private String description; // 玩家描述
     private String senderIdentity; // 玩家身份
     /**
      * 人格名称
@@ -23,7 +25,7 @@ public class PlayCustomizeDto {
     /**
      * 人格描述
      */
-    private String description; // 角色描述
+    private String agentDescription; // 角色描述
 
     /**
      * 性格描述
@@ -33,7 +35,7 @@ public class PlayCustomizeDto {
     /**
      * 社会身份
      */
-    private String identity; // 社会身份
+    private String agentIdentity; // 社会身份
 
     /**
      * 爱好

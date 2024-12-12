@@ -100,12 +100,11 @@ public class PlayerUtil {
 
     /**
      * 编辑玩家信息
-     * @param appId
      * @param playerId
      * @param playerName
      * @throws Exception
      */
-    public void modify(String appId, String playerId, String playerName,String playerType,String desc) throws Exception {
+    public void modify(String playerId, String playerName,String playerType,String desc,String identity) throws Exception {
         String modifyUrl= url + suffixUrl + "/modify";
         System.out.println("url:" + modifyUrl);
         PlayerDto playerDto = PlayerDto.builder()
@@ -113,7 +112,9 @@ public class PlayerUtil {
                 .appId(appId)
                 .playerName(playerName)
                 .playerType(playerType)
-                .description(desc).build();
+                .description(desc)
+                .senderIdentity(identity)
+                .build();
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(playerDto));
         long ts = System.currentTimeMillis();
         Request request = new Request.Builder()

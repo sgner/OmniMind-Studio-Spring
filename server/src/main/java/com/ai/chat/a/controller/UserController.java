@@ -54,6 +54,25 @@ public class UserController{
     private final CommentService commentService;
     private final UserCommentLikeService userCommentLikeService;
     private final SessionService sessionService;
+    private final RoleService roleService;
+    @GetMapping("/avatar")
+    public R getAvatar(@RequestParam String robotId){
+        log.info("获取用户{}的头像",robotId);
+        String avatar = "";
+        if(robotId.startsWith("R")){
+            Robot robot = robotService.getOne(new LambdaQueryWrapper<Robot>().eq(Robot::getId, robotId));
+            if(robot != null){
+                avatar = robot.getAvatar();
+            }
+        }else{
+            Role role = roleService.getOne(new LambdaQueryWrapper<Role>().eq(Role::getAgentId, robotId));
+            if(role != null){
+                avatar = role.getAgentAvatar();
+            }
+        }
+        log.info("用户{}的头像:{}",robotId,avatar);
+        return R.success((Object) avatar);
+    }
     @PostMapping("/login")
     public R login(@RequestBody LoginDTO loginDTO){
         log.info("用户{}登录",loginDTO.getAccount());
@@ -183,7 +202,9 @@ public class UserController{
    }
    @GetMapping("/new/session")
   public R newSession(String robotId){
-       return R.success(userService.newSession(robotId));
+       return R.success(
+               userService.newSession(robotId)
+       );
    }
    @GetMapping("/cancel/subscribe")
     public R cancelSubscribe(String robotId){

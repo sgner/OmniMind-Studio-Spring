@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SunoGcuiProcessReceive {
     private final RequestGcui requestGcui;
-    private final ChannelContextUtils channelContextUtils;
+    private final MessageHandle messageHandle;
     private final static String QUEUE_NAME = "suno.gcui.queue";
     private final static String QUEUE_NAME_LYRICS = "suno.gcui.queue.lyrics";
     private final static String QUEUE_NAME_END = "suno.gcui.queue.end";
@@ -107,7 +107,7 @@ public class SunoGcuiProcessReceive {
                     .contactId(message.get(0).getUserId())
                     .extendData(generatedSongRequest)
                     .build();
-            channelContextUtils.sendMessage(messageSendDTO);
+            messageHandle.sendMessage(messageSendDTO);
         }catch (Exception e){
             e.printStackTrace();
             log.error("保存失败！");

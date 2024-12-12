@@ -371,5 +371,24 @@ public class UploadController {
 //        requestGcui.getGenerateSongRequest("7711c6ad-5487-49dc-80e2-19b56468a94a",0,ThreadLocalUtil.get(),"5ad381d9faef1d59864fac10a9194e38");
 //        return R.success();
 //    }
-
+@PostMapping("/avatar")
+    public R uploadAvatar(@RequestParam("avatar") MultipartFile file){
+        try{
+            String[] upload = aliOssUpload.upload(file);
+            log.info("上传成功{}",upload[0]);
+            return R.success(upload);
+        }catch (Exception e){
+                return R.error(ErrorCode.UPLOAD_ERROR.getCode(),"上传失败");
+        }
+    }
+    @DeleteMapping("/avatar")
+    public R deleteAvatar(String fileName){
+        try{
+            log.info("删除{}",fileName);
+            aliOssUpload.delete(fileName);
+        }catch (Exception e){
+             return R.error(ErrorCode.OPERATION_ERROR.getCode(),"删除失败");
+        }
+        return R.success();
+    }
 }
