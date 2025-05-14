@@ -9,19 +9,19 @@ spring:
     retry:
       max-attempts: 1
     qianfan:
-      api-key: zFMEO3QLnRqbV4woUK3o6v9f
-      secret-key: dx3q5r7cBkBo9QPcZ6nfuUp02VRywPJA
+      api-key: 
+      secret-key: 
       image:
-        base-url: https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/text2image/sd_xl
+        base-url:
     openai:
       embedding:
-        base-url: https://api.xty.app
-        api-key: sk-wt2Gxw7NqSs8cUojB0Ed73Ab99C94eCdB4A1C44a0cCeF6Db
+        base-url:
+        api-key:
       image:
         options:
           response-format: b64_json
-      base-url: https://api.xty.app
-      api-key: sk-wt2Gxw7NqSs8cUojB0Ed73Ab99C94eCdB4A1C44a0cCeF6Db
+      base-url: 
+      api-key: 
   rabbitmq:
     host:
     port: 5672
@@ -39,10 +39,10 @@ spring:
         multiplier: 1  #失败后等待时间倍数
         max-attempts: 3 # 最大重试次数
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/ai-chat-a?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: cfwrettt.com
+    url: 
+    driver-class-name: 
+    username: 
+    password: 
   application:
     name: a-chat-ai
   data:
@@ -92,27 +92,27 @@ com:
        model: gpt-3.5-turbo
       page-size: 10
 alioss:
-  access-key-id: LTAI5tKK9ayrJ7TftSfjtfaj
-  endpoint: oss-cn-beijing.aliyuncs.com
-  access-key-secret: S6z16d5FioWNnrhkax4zOWDy4Hm7U5
-  bucket-name: web-tianci
+  access-key-id: 
+  endpoint: 
+  access-key-secret: 
+  bucket-name: 
   project-name: a-ai
 xf:
-  appid: 2b1eb46a
-  apiSecret: ZWY3MDAzZWIyMjEyMWY4ZDhhYTAwZTZi
-  apiKey: aac54d5d63078e3d1260751ce32c93c2
+  appid: 
+  apiSecret: 
+  apiKey: 
   text:
     correction:
-      hostUrl: https://api.xf-yun.com/v1/private/s9a87e3ec
+      hostUrl: 
   xfxh:
     cosplay:
       interaction:
-        interactiveUrl: wss://ai-character.xfyun.cn/api/open/interactivews/
-        interactionType: "obs"
+        interactiveUrl: 
+        interactionType: 
       player:
-        url: https://ai-character.xfyun.cn/api
+        url: 
   list:
     black_list:
     white_list:
-    res_id: base
-    hostUrl: https://evo-gen.xfyun.cn/individuation/gen/uploa
+    res_id:
+    hostUrl: 
