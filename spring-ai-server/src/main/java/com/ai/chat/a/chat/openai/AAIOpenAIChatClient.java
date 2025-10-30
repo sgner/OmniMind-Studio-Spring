@@ -16,10 +16,13 @@ import com.ai.chat.a.utils.*;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.Media;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -32,6 +35,7 @@ import reactor.core.publisher.Flux;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +45,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.ExecutionException;
 import org.springframework.util.DigestUtils;
+import reactor.core.publisher.Mono;
 
 @Data
 @Slf4j
@@ -98,19 +103,28 @@ public class AAIOpenAIChatClient {
            
            log.info("开始RAG流程，用户ID: {}, 会话ID: {}, 查询: {}", userId, sessionId, query);
            
+           // 0. 检查RAG缓存
+           try {
+               String cachedAnswer = memoryUpdateService.checkRAGCache(userId, sessionId, query);
+               if (cachedAnswer != null && !cachedAnswer.isEmpty()) {
+                   log.info("命中RAG缓存，直接返回缓存结果，用户ID: {}, 会话ID: {}", userId, sessionId);
+                   return OpenAIResponse.builder()
+                           .response(cachedAnswer)
+                           .build();
+               }
+           } catch (Exception e) {
+               log.warn("检查RAG缓存失败，继续执行RAG流程，用户ID: {}, 会话ID: {}", userId, sessionId, e);
+           }
+           
            // 1. 并行检索上下文信息
            try {
                List<String> retrievalResults = parallelRetrievalService.retrieve(userId, sessionId, query, 5).get();
-               
                // 2. 合并上下文
                String context = contextMergeService.mergeContext(retrievalResults, query);
-               
                // 3. 构建提示词
                List<Message> messages = new ArrayList<>();
-               
                // 添加系统提示词
                messages.add(new SystemMessage(Constants.SYSTEM_MESSAGE_PROMPT));
-               
                // 添加上下文信息
                if (!context.isEmpty()) {
                    messages.add(new SystemMessage("以下是与用户问题相关的上下文信息：\n\n" + context + 
@@ -312,9 +326,6 @@ public class AAIOpenAIChatClient {
                    .filePath(imageUploadRef.get()[0])
                    .build();
        }
-
-
-
 
 
 
@@ -658,5 +669,124 @@ public class AAIOpenAIChatClient {
                 mediaList.add(media);
 
     }
+
+
+    public Flux<ChatResponse> generateRAGStream(UserChatDTO userChatDTO, String model, List<String> contents) throws IOException {
+    // 获取用户ID和会话ID
+    String userId = ThreadLocalUtil.get();
+    String sessionId = userChatDTO.getSessionId();
+    String query = userChatDTO.getQuestion();
+
+    log.info("开始RAG流式生成，用户ID: {}, 会话ID: {}, 查询: {}", userId, sessionId, query);
+
+    // 检查RAG缓存
+    try {
+        String cachedAnswer = memoryUpdateService.checkRAGCache(userId, sessionId, query);
+        if (cachedAnswer != null && !cachedAnswer.isEmpty()) {
+            log.info("命中RAG缓存，返回流式缓存结果，用户ID: {}, 会话ID: {}", userId, sessionId);
+            return Flux.fromStream(
+                            cachedAnswer.codePoints()  // 支持中文、emoji
+                                    .mapToObj(cp -> String.valueOf(Character.toChars(cp))))
+                    .zipWith(Flux.interval(Duration.ofMillis(30)))  // 30ms 一个字符
+                    .map(tuple -> tuple.getT1())
+                    .scan(new StringBuilder(), StringBuilder::append)
+                    .map(sb -> {
+                        // 构造 Spring AI 标准的 Generation
+                        Generation generation = new Generation(sb.toString());
+                        return ChatResponse.builder()
+                                .withGenerations(List.of(generation))
+                                .build();
+                    });
+        }
+    } catch (Exception e) {
+        log.warn("检查RAG缓存失败，继续执行RAG流式流程，用户ID: {}, 会话ID: {}", userId, sessionId, e);
+    }
+
+    // 用于收集流式响应的完整内容
+    StringBuilder fullResponseBuilder = new StringBuilder();
+
+    // 执行RAG检索流程
+    return Mono.fromCallable(() -> {
+        // 1. 并行检索上下文信息
+        List<String> retrievalResults = parallelRetrievalService.retrieve(userId, sessionId, query, 5).get();
+
+        // 2. 合并上下文
+        String context = contextMergeService.mergeContext(retrievalResults, query);
+
+        // 3. 构建提示词
+        List<Message> messages = new ArrayList<>();
+        // 添加系统提示词
+        messages.add(new SystemMessage(Constants.SYSTEM_MESSAGE_PROMPT));
+        // 添加上下文信息
+        if (!context.isEmpty()) {
+            messages.add(new SystemMessage("以下是与用户问题相关的上下文信息：\n\n" + context +
+                    "\n\n请基于以上上下文信息回答用户的问题，如果上下文信息不足以回答问题，请告知用户。"));
+        }
+
+        // 4. 处理用户上传文件（如果有）
+        List<UserUploadFile> userUploadFile = redisUtil.getUserUploadFile(userChatDTO);
+        Boolean updated = redisUtil.updateExpirationTime(userId + sessionId);
+
+        if (!updated) {
+            redisUtil.setUserUploadFile(userChatDTO, userUploadFile);
+        }
+
+        // 5. 构建用户消息
+        UserMessage userMessage;
+        List<Media> mediaList = new ArrayList<>();
+
+        // 对于流式RAG，暂时不支持多模态任务
+        if (userUploadFile != null && !userUploadFile.isEmpty()) {
+            log.info("上传了文件，准备RAG流式处理");
+
+            for (UserUploadFile uploadFile : userUploadFile) {
+                if (uploadFile.getFileType() == 1) {
+                    stringPathToMedia(uploadFile.getSrc(), mediaList);
+                }
+            }
+
+            userMessage = new UserMessage(query, mediaList);
+        } else {
+            log.info("没有上传文件，准备RAG流式处理");
+            userMessage = new UserMessage(query);
+        }
+
+        // 添加用户消息
+        messages.add(userMessage);
+
+        // 6. 构建Prompt
+        Prompt prompt = new Prompt(messages, OpenAiChatOptions.builder()
+                .withModel(setDefault(model))
+                .withHttpHeaders(Map.of("Accept-Encoding", "identity"))
+                .build());
+
+        return prompt;
+    })
+    .flatMapMany(prompt -> {
+        // 7. 调用大模型流式接口
+        return chatClient.stream(prompt)
+                .doOnNext(chatResponse -> {
+                    // 收集流式响应内容
+                    if (chatResponse.getResult() != null && chatResponse.getResult().getOutput() != null) {
+                        String content = chatResponse.getResult().getOutput().getContent();
+                        if (content != null) {
+                            fullResponseBuilder.append(content);
+                        }
+                        log.debug("收到流式响应片段: {}", content);
+                    }
+                })
+                .doOnComplete(() -> {
+                    // 8. 流式完成后，更新RAG缓存和短期记忆
+                    String fullAnswer = fullResponseBuilder.toString();
+                    if (!fullAnswer.isEmpty()) {
+                        // 异步更新短期记忆和RAG缓存
+                        memoryUpdateService.updateMemoryAndCacheAsync(userId, sessionId, query, fullAnswer);
+                        log.info("RAG流式响应完成，已更新缓存，用户ID: {}, 会话ID: {}", userId, sessionId);
+                    }
+                });
+    })
+    .doOnError(error -> {
+        log.error("RAG流式生成出错，用户ID: {}, 会话ID: {}", userId, sessionId, error);
+    });}
 
 }

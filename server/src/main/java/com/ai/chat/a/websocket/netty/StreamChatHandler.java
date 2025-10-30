@@ -86,7 +86,10 @@ public class StreamChatHandler extends SimpleChannelInboundHandler<TextWebSocket
     private void handleStreamChat(StreamChatRequest request, ChannelHandlerContext ctx) throws Exception {
         UserChatDTO chatDTO = request.getChatDTO();
         String model = request.getModel() != null ? request.getModel() : "gpt-3.5-turbo"; // 默认模型
-
+    
+        // 检查是否使用RAG功能
+        boolean useRAG = request.isUseRAG() != null ? request.isUseRAG() : false;
+    
         // 保存用户问题到数据库
         Long conversationId = saveUserQuestion(request.getUserId(), chatDTO);
         if (conversationId == null) {
@@ -95,27 +98,35 @@ public class StreamChatHandler extends SimpleChannelInboundHandler<TextWebSocket
         }
         // 生成一个唯一的响应ID
         String responseId = UUID.randomUUID().toString();
-
+    
         // 构建流式响应的元数据
         StreamChatMetadata metadata = new StreamChatMetadata();
         metadata.setConversationId(conversationId);
         metadata.setResponseId(responseId);
         metadata.setStartTime(System.currentTimeMillis());
-
+    
         // 发送开始响应，通知客户端流式响应即将开始
         sendStreamStartResponse(ctx, metadata);
-
+    
         // 获取用户channel
         String userId = request.getUserId();
         String channelId = ctx.channel().id().toString();
         AttributeKey<String> attribute = AttributeKey.valueOf(channelId);
         ctx.channel().attr(attribute).set(userId);
-
+    
         try {
-            // 调用AI客户端获取流式响应
-            Flux<ChatResponse> fluxResponse = aiOpenAIChatClient.generateStream(chatDTO, model);
+            // 根据配置选择使用RAG流式响应或普通流式响应
+            Flux<ChatResponse> fluxResponse;
+            if (useRAG) {
+                log.info("使用RAG流式对话，用户ID: {}", userId);
+                fluxResponse = aiOpenAIChatClient.generateRAGStream(chatDTO, model, null);
+            } else {
+                log.info("使用普通流式对话，用户ID: {}", userId);
+                fluxResponse = aiOpenAIChatClient.generateStream(chatDTO, model);
+            }
+            
             StringBuilder fullResponse = new StringBuilder();
-
+    
             // 订阅流式响应
             fluxResponse.subscribe(
                 // 处理每个响应片段
@@ -240,6 +251,8 @@ public class StreamChatHandler extends SimpleChannelInboundHandler<TextWebSocket
         private String userId;
         private UserChatDTO chatDTO;
         private String model;
+        private Boolean useRAG; // 是否使用RAG功能
+        
         // getters and setters
         public String getUserId() { return userId; }
         public void setUserId(String userId) { this.userId = userId; }
@@ -247,6 +260,8 @@ public class StreamChatHandler extends SimpleChannelInboundHandler<TextWebSocket
         public void setChatDTO(UserChatDTO chatDTO) { this.chatDTO = chatDTO; }
         public String getModel() { return model; }
         public void setModel(String model) { this.model = model; }
+        public Boolean isUseRAG() { return useRAG; }
+        public void setUseRAG(Boolean useRAG) { this.useRAG = useRAG; }
     }
 
     // 流式对话响应类

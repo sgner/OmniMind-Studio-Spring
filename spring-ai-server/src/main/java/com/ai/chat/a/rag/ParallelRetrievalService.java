@@ -55,14 +55,11 @@ public class ParallelRetrievalService {
         return CompletableFuture.allOf(shortTermFuture, longTermFuture, knowledgeBaseFuture)
                 .thenApply(v -> {
                     List<String> allResults = new ArrayList<>();
-                    
                     try {
                         // 添加短期记忆（权重最高）
                         allResults.addAll(shortTermFuture.get());
-                        
                         // 添加长期记忆
                         allResults.addAll(longTermFuture.get());
-                        
                         // 添加知识库内容
                         allResults.addAll(knowledgeBaseFuture.get());
                         

@@ -47,32 +47,34 @@ public class OpenaiController {
     public R chatWithOpenai(@RequestBody UserChatDTO userChatDTO, @PathVariable String model) throws IOException {
         log.info("用户提问: {}", userChatDTO);
         try {
-            // 直接调用已支持并发的客户端方法
-            OpenAIResponse generate = aAiOpenAIChatClient.generate(userChatDTO, model);
             
-            // 会话更新也可以异步处理，提高响应速度
+            // 异步处理AI生成和会话更新
             aiServiceExecutor.submit(() -> {
                 try {
+                    // 调用AI生成方法
+                    OpenAIResponse generate = aAiOpenAIChatClient.generate(userChatDTO, model);
+                    
+                    // 更新会话信息（包括WebSocket推送）
                     Session currentSession = sessionService.getOne(new LambdaQueryWrapper<Session>()
                             .eq(Session::getSessionId, userChatDTO.getSessionId()));
                     if (currentSession != null) {
                         sessionService.updateSession(currentSession, userChatDTO, generate);
                     }
                 } catch (Exception e) {
-                    log.error("更新会话信息失败", e);
+                    log.error("AI对话处理失败", e);
+                    // TODO 通过WebSocket推送错误消息给前端
                 }
             });
             
-            return R.success(generate);
+            return R.success("请求已接收，正在处理中...");
         } catch (Exception e) {
-            log.error("AI对话处理失败", e);
-            return R.error(ErrorCode.SYSTEM_ERROR,"AI处理失败，请稍后重试");
+            log.error("提交AI对话请求失败", e);
+            return R.error(ErrorCode.SYSTEM_ERROR,"提交请求失败，请稍后重试");
         }
     }
 
     @PostMapping("/openai/rag/{model}")
     public R chatWithOpenaiRag(@RequestBody UserChatDTO userChatDTO, @PathVariable String model) throws IOException {
-        log.info("用户RAG提问: {}", userChatDTO);
         try {
             // 1. 获取用户相关文档ID（可以考虑异步，但这里先保持同步以确保正确性）
             List<UserDocument> documents = userDocumentService.list(new LambdaQueryWrapper<UserDocument>()
@@ -88,15 +90,13 @@ public class OpenaiController {
                             .withFilterExpression("id in [" + String.join(",", ids.stream().map(id -> "'" + id + "'").toList()) + "]")
             );
             List<String> contents = searchResults.stream().map(Document::getContent).toList();
+
             
-            // 3. 调用已支持并发的RAG生成方法
-            OpenAIResponse response = aAiOpenAIChatClient.generateRAG(userChatDTO, model, contents);
-            
-            // 4. 异步保存对话到向量数据库和更新会话，提高响应速度
+            // 3. 异步保存对话到向量数据库和更新会话，提高响应速度
             aiServiceExecutor.submit(() -> {
                 try {
                     log.info("异步将用户提问和模型回答存入向量数据库");
-                    
+                    OpenAIResponse response = aAiOpenAIChatClient.generateRAG(userChatDTO, model, contents);
                     // 创建文档对象
                     List<Document> newDocuments = new ArrayList<>();
                     
@@ -142,17 +142,17 @@ public class OpenaiController {
                 }
             });
             
-            return R.success(response);
+            return R.success("请求已接收，正在处理中...");
         } catch (Exception e) {
             log.error("RAG对话处理失败", e);
             return R.error(ErrorCode.SYSTEM_ERROR,"RAG处理失败，请稍后重试");
         }
     }
 
-    @PostMapping("/openai/rag/flux/{model}")
-    public R chatWithOpenaiRagFlux(){
-        // TODO 添加记忆功能
-        // TODO 流式对话并且解决超长文本记忆和token限制问题
-        return R.success();
-    }
+//    @PostMapping("/openai/rag/flux/{model}")
+//    public R chatWithOpenaiRagFlux(){
+//        // TODO 添加记忆功能
+//        // TODO 流式对话并且解决超长文本记忆和token限制问题
+//        return R.success();
+//    }
 }

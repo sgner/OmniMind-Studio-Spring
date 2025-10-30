@@ -64,21 +64,21 @@ public class MemoryUpdateService {
     
     /**
      * 异步更新短期记忆和RAG缓存
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId    用户ID
      * @param sessionId 会话ID
-     * @param query 用户查询
-     * @param answer AI回答
+     * @param query     用户查询
+     * @param answer    AI回答
      */
-    public CompletableFuture<Void> updateMemoryAndCacheAsync(String userId, String sessionId, String query, String answer) {
-        return CompletableFuture.runAsync(() -> {
+    public void updateMemoryAndCacheAsync(String userId, String sessionId, String query, String answer) {
+        CompletableFuture.runAsync(() -> {
             try {
                 // 更新短期记忆
                 updateShortTermMemory(userId, sessionId, query, answer);
-                
+
                 // 写回RAG缓存
                 updateRAGCache(userId, sessionId, query, answer);
-                
+
                 log.info("短期记忆和RAG缓存更新完成，用户ID: {}, 会话ID: {}", userId, sessionId);
             } catch (Exception e) {
                 log.error("更新短期记忆和RAG缓存失败，用户ID: {}, 会话ID: {}", userId, sessionId, e);
