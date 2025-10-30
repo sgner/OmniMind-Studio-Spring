@@ -19,9 +19,9 @@
 |------|------|----------|
 | OpenaiController | 处理对话相关的HTTP请求 | server/src/main/java/com/ai/chat/a/controller/OpenaiController.java |
 | AAIOpenAIChatClient | 实现对话生成的核心逻辑 | spring-ai-server/src/main/java/com/ai/chat/a/chat/openai/AAIOpenAIChatClient.java |
-| MemoryUpdateService | 管理RAG缓存和短期记忆 | 引用自依赖注入 |
-| ParallelRetrievalService | 并行检索上下文信息 | 引用自依赖注入 |
-| ContextMergeService | 合并检索到的上下文 | 引用自依赖注入 |
+| MemoryUpdateService | 管理RAG缓存和短期记忆
+| ParallelRetrievalService | 并行检索上下文信息
+| ContextMergeService | 合并检索到的上下文
 
 ## 3. 关键功能实现与设计亮点
 
@@ -62,7 +62,6 @@ public R chatWithOpenai(@RequestBody UserChatDTO userChatDTO, @PathVariable Stri
 **当前缺点**：
 - 缺少任务状态跟踪机制，无法向用户展示处理进度
 - 错误处理不完善，注释中提到的错误WebSocket推送尚未实现
-- 没有超时控制机制，长时间运行的任务可能占用资源
 
 ### 3.2 RAG对话实现
 
@@ -148,7 +147,6 @@ public Flux<ChatResponse> generateRAGStream(UserChatDTO userChatDTO, String mode
 - 完整的错误处理和日志记录
 
 **当前缺点**：
-- 流式RAG不支持多模态任务，功能受限
 - 模拟的字符级流式输出可能导致网络请求过多
 - 缺少流式响应的进度控制和取消机制
 
@@ -206,8 +204,6 @@ private OpenAIResponse handleMultiModalTaskWithConcurrency(UserChatDTO userChatD
 - 完整的错误处理：单个任务失败不会导致整个流程崩溃
 
 **当前缺点**：
-- 缺少任务超时机制，长时间运行的任务可能导致线程阻塞
-- 流式模式下不支持多模态，功能体验不一致
 - 资源消耗较大，并发生成可能导致系统负载过高
 
 ### 3.5 缓存机制设计
@@ -243,8 +239,6 @@ doOnComplete(() -> {
 - 异步缓存更新：不阻塞主流程，提高系统吞吐量
 
 **当前缺点**：
-- 缓存失效策略不明确，没有设置过期时间
-- 缺少缓存命中率统计和优化机制
 - 缓存键设计可能不够合理，影响命中率
 
 ### 3.6 文档检索与更新机制
@@ -298,7 +292,6 @@ userDocumentService.saveBatch(userDocuments);
 
 **当前缺点**：
 - 缺少文档去重机制，可能存储重复信息
-- 没有文档清理策略，长期使用会导致数据库膨胀
 - 无法根据文档重要性调整权重
 
 ## 4. 技术栈选择与实现
@@ -331,24 +324,8 @@ userDocumentService.saveBatch(userDocuments);
    - 添加文档重要性权重，优化排序结果
    - 实现混合检索策略，结合关键词和向量检索
 
-### 5.2 功能增强
 
-1. **多模态支持**
-   - 扩展流式模式下的多模态支持
-   - 添加语音输入和输出功能
-   - 支持视频内容理解和生成
-
-2. **会话管理**
-   - 实现会话摘要和主题追踪
-   - 添加会话分支和回溯功能
-   - 支持跨设备会话同步
-
-3. **错误处理**
-   - 实现完整的错误WebSocket推送机制
-   - 添加降级策略，确保系统可用性
-   - 完善日志记录和监控告警
-
-### 5.3 架构改进
+### 5.2 未来的改进
 
 1. **微服务拆分**
    - 将文本生成、图像生成、文档检索拆分为独立服务
@@ -363,86 +340,4 @@ userDocumentService.saveBatch(userDocuments);
    - 实现分布式追踪，便于问题定位
    - 构建系统健康仪表盘
 
-## 6. 代码优化建议
 
-### 6.1 错误处理改进
-
-```java
-// 当前实现
-try {
-    // 代码
-} catch (Exception e) {
-    log.error("保存对话到向量数据库或更新会话失败", e);
-}
-
-// 建议实现
-try {
-    // 代码
-} catch (Exception e) {
-    log.error("保存对话到向量数据库或更新会话失败，userId={}, sessionId={}", 
-              ThreadLocalUtil.get(), userChatDTO.getSessionId(), e);
-    // 发送错误事件到事件总线或消息队列
-    eventService.publishErrorEvent(ErrorEvent.builder()
-            .type(ErrorType.RAG_STORAGE)
-            .userId(ThreadLocalUtil.get())
-            .sessionId(userChatDTO.getSessionId())
-            .errorMessage(e.getMessage())
-            .build());
-}
-```
-
-### 6.2 超时控制
-
-```java
-// 当前实现
-latch.await();
-
-// 建议实现
-try {
-    boolean completed = latch.await(30, TimeUnit.SECONDS);
-    if (!completed) {
-        log.warn("多模态任务超时，userId={}, sessionId={}", 
-                 ThreadLocalUtil.get(), userChatDTO.getSessionId());
-        // 取消超时任务
-        // 返回部分结果或降级处理
-    }
-} catch (InterruptedException e) {
-    Thread.currentThread().interrupt();
-    log.error("等待任务完成时被中断", e);
-}
-```
-
-### 6.3 缓存管理
-
-```java
-// 建议添加缓存管理类
-@Component
-public class RAGCacheManager {
-    
-    private static final long CACHE_TTL = 24 * 60 * 60 * 1000; // 24小时
-    private static final double SIMILARITY_THRESHOLD = 0.85;
-    
-    @Autowired
-    private RedisUtil redisUtil;
-    
-    public String getCachedAnswer(String userId, String sessionId, String query) {
-        // 实现带相似度计算的缓存查找
-        // ...
-    }
-    
-    public void updateCache(String userId, String sessionId, String query, String answer) {
-        // 实现带过期时间的缓存更新
-        // ...
-    }
-    
-    public void evictCache(String userId, String sessionId) {
-        // 实现缓存清理
-        // ...
-    }
-    
-    public Map<String, Object> getCacheStats() {
-        // 实现缓存统计
-        // ...
-    }
-}
-```
