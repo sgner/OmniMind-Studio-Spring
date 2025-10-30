@@ -39,6 +39,11 @@
           <option value="a-chat-ai-spring" />
           <option value="a-chat-ai-spring" />
           <option value="server" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
+          <option value="a-chat-ai-spring" />
         </list>
       </option>
       <option name="ignoredPackages">
@@ -69,10 +74,20 @@
           <option value="org.bouncycastle:bcprov-jdk18on:1.73" />
           <option value="com.fasterxml.jackson.core:jackson-databind:2.13.0" />
           <option value="cn.hutool:hutool-all:5.8.20" />
+          <option value="io.netty:netty-common:4.1.111.Final" />
+          <option value="org.apache.tomcat.embed:tomcat-embed-core:10.1.26" />
+          <option value="org.springframework:spring-context:6.1.11" />
+          <option value="org.springframework:spring-web:6.1.11" />
+          <option value="org.springframework:spring-webmvc:6.1.11" />
         </list>
       </option>
       <option name="ignoredReasons">
         <list>
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />

@@ -15,7 +15,6 @@ import com.ai.chat.a.enums.UploadEnum;
 import com.ai.chat.a.enums.UserRobotTypeEnum;
 import com.ai.chat.a.handle.FileHandle;
 import com.ai.chat.a.html.TimeOut;
-import com.ai.chat.a.milvus.AVectorDB;
 import com.ai.chat.a.mq.MessageHandle;
 import com.ai.chat.a.po.Session;
 import com.ai.chat.a.po.User;
@@ -33,6 +32,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.document.DocumentTransformer;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -53,7 +55,8 @@ public class UploadController {
     private final SessionService sessionService;
     private final MessageHandle messageHandle;
     private final UserService userService;
-    private final  AVectorDB aVectorDB;
+    private final VectorStore vectorStore;
+    private final DocumentTransformer documentTransformer;
     private final UserDocumentService userDocumentService;
     private final RequestGcui requestGcui;
     private final AtomicBoolean shouldTerminate = new AtomicBoolean(false);
@@ -265,24 +268,44 @@ public class UploadController {
                     ReadMediaFile readMediaFile = ReadMediaFile.defaultReadMediaFile();
                     int fileType = FileUtil.getFileType(file);
                     if(List.of(3,7,8,9,10,5).contains(fileType)){
-                        List<String> ids = aVectorDB.addDocument(file.getResource());
-                        if(ids != null){
-                             List<UserDocument> userDocumentList = new ArrayList<>();
-                             ids.forEach(id->{
-                                  userDocumentList.add(UserDocument.builder()
-                                          .documentId(id)
-                                          .userId(ThreadLocalUtil.get())
-                                          .sessionId(currentSession.getSessionId())
-                                          .build());
-                             });
-                             userDocumentService.saveBatch(userDocumentList);
-                        }
-                        readMediaFile.setFetch(true);
-                        if(ids != null){
-                             return UserUploadFile.builder()
-                                     .status(UploadEnum.FAIL.getCode())
-                                     .name(file.getOriginalFilename())
-                                     .build();
+                        try {
+                            // 读取文件内容
+                            String content = new String(file.getInputStream().readAllBytes());
+                            
+                            // 创建文档对象
+                            Document document = new Document(content);
+                            document.getMetadata().put("userId", ThreadLocalUtil.get());
+                            document.getMetadata().put("sessionId", currentSession.getSessionId());
+                            document.getMetadata().put("fileName", file.getOriginalFilename());
+                            document.getMetadata().put("fileType", fileType);
+                            document.getMetadata().put("uploadTime", System.currentTimeMillis());
+                            
+                            // 处理并添加到VectorStore
+                            List<Document> processedDocuments = documentTransformer.apply(List.of(document));
+                            vectorStore.add(processedDocuments);
+                            
+                            // 保存文档ID到数据库
+                            List<UserDocument> userDocumentList = new ArrayList<>();
+                            processedDocuments.forEach(doc -> {
+                                userDocumentList.add(UserDocument.builder()
+                                        .documentId(doc.getId())
+                                        .userId(ThreadLocalUtil.get())
+                                        .sessionId(currentSession.getSessionId())
+                                        .build());
+                            });
+                            userDocumentService.saveBatch(userDocumentList);
+                            
+                            readMediaFile.setFetch(true);
+                            return UserUploadFile.builder()
+                                    .status(UploadEnum.SUCCESS.getCode())
+                                    .name(file.getOriginalFilename())
+                                    .build();
+                        } catch (Exception e) {
+                            log.error("处理文件内容失败", e);
+                            return UserUploadFile.builder()
+                                    .status(UploadEnum.FAIL.getCode())
+                                    .name(file.getOriginalFilename())
+                                    .build();
                         }
                     }else {
                         readMediaFile = fileHandle.handleMedia(file, model);
@@ -359,9 +382,9 @@ public class UploadController {
     }
 //    @PostMapping("/rag/test")
 //    public R test() {
-////        aVectorDB.addDocument(file.getResource());
+////        vectorStore.add(document);
 ////        UserIdea userIdea = JSONStructuredOutput.userIdeaOutput("一段动听的音乐，激情的金属声,是一个电影片段");
-////          request.lyricsRequest(GenerateLyricsPromptDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
+//          request.lyricsRequest(GenerateLyricsPromptDTO.builder().prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
 ////        request.songRequest(InspirationModePromptDTO.builder().gpt_description_prompt("一段动听的音乐，激情的金属声,是一个电影片段").build());
 //          requestGcui.GenerateSongRequest(SunoFastDTO.builder().prompt("孤独之旅").build(),ThreadLocalUtil.get(),"5ad381d9faef1d59864fac10a9194e38");
 //          return R.success();

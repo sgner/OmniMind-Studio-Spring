@@ -136,6 +136,52 @@ public class ChannelContextUtils {
                 () -> log.info("Completed sending all messages in Flux")
         );
     }
+
+    /**
+     * 发送流式对话消息
+     * @param userId 用户ID
+     * @param message 消息内容
+     */
+    public static void sendStreamMessage(String userId, String message) {
+        Channel channel = USER_CONTEXT_MAP.get(userId);
+        if (channel != null && channel.isActive()) {
+            try {
+                channel.writeAndFlush(new TextWebSocketFrame(message));
+                log.info("发送流式对话消息给用户: {}, 消息长度: {}", userId, message.length());
+            } catch (Exception e) {
+                log.error("发送流式对话消息失败", e);
+            }
+        } else {
+            log.warn("用户 {} 连接已关闭或不存在", userId);
+        }
+    }
+    
+    /**
+     * 发送流式响应给用户
+     * @param userId 用户ID
+     * @param flux 流式响应
+     */
+    public static void sendFluxResponse(String userId, Flux<ChatResponse> flux) {
+        Channel channel = USER_CONTEXT_MAP.get(userId);
+        if (channel != null && channel.isActive()) {
+            flux.subscribe(
+                chatResponse -> {
+                    try {
+                        String content = chatResponse.getResult().getOutput().getContent();
+                        channel.writeAndFlush(new TextWebSocketFrame(content));
+                    } catch (Exception e) {
+                        log.error("发送流式响应片段失败", e);
+                    }
+                },
+                error -> {
+                    log.error("流式响应处理失败", error);
+                },
+                () -> {
+                    log.info("流式响应发送完成，用户ID: {}", userId);
+                }
+            );
+        }
+    }
       private void add2Group(String groupId,Channel channel){
             ChannelGroup group = GROUP_CONTEXT_MAP.get(groupId);
             if(group == null){

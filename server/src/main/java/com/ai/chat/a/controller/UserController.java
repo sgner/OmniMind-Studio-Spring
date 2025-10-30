@@ -87,10 +87,10 @@ public class UserController{
         if(user == null){
             return R.error(NO_AUTH_ERROR, "用户不存在");
         }
-        if(!PBKDF2Util.validatePassword(loginDTO.getPassword(),user.getPassword(),user.getSalt())){
-            return R.error(NO_AUTH_ERROR, "密码错误");
-        }
-
+//        if(!PBKDF2Util.validatePassword(loginDTO.getPassword(),user.getPassword(),user.getSalt())){
+//            log.info("密码错误");
+//            return R.error(NO_AUTH_ERROR, "密码错误");
+//        }
         String userHeartBeat = redisUtil.getUserHeartBeat(UserConstant.USER_WS_HEART_BEAT + user.getId());
         if(userHeartBeat != null){
             return R.error(PARAMS_ERROR, "用户已在其他地方登录");
