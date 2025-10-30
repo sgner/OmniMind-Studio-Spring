@@ -1,5 +1,5 @@
 # 一个有意思的项目，分享给所有人
-### 在test分支里进行改造https://github.com/sgner/OmniMind-Studio-Spring/tree/test?tab=readme-ov-file
+### 新的test分支里进行改造https://github.com/sgner/OmniMind-Studio-Spring/tree/test?tab=readme-ov-file
 ## 图片画廊
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px 0; list-style: none; margin: 0 auto; max-width: 1400px;">
   <a href="https://raw.githubusercontent.com/sgner/images/main/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-10-28%20232330.png" target="_blank" style="display: block; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; background: #fff; text-decoration: none;" onmouseover="this.style.cssText='display: block; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; background: #fff; text-decoration: none;transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.2);'" onmouseout="this.style.cssText='display: block; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; background: #fff; text-decoration: none;'" title="点击查看大图">
