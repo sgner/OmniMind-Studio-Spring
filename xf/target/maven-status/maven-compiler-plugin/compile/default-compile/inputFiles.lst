@@ -18,14 +18,15 @@ D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\api\xfXh\utils\Interacti
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\api\xfXh\utils\PlayerUtil.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\api\xfXh\XfXhCosClient.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\banner\MyBanner.java
+D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\bot\XfRolePlayBot.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\config\XfBlackListAndWhiteListUploadConfig.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\config\XfTextCorrectionConfig.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\config\XfXhAgentUtilConfig.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\config\XfXhInteractionConfig.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\config\XfXhPlayerUtilConfig.java
+D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\mq\CosResponseSender.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\properties\XfBlackAndWhiteProperties.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\properties\XfProperties.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\properties\XfTextCorrectionProperties.java
-D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\properties\XfXhCosplayAgentProperties.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\properties\XfXhCosplayInteractionProperties.java
 D:\aoe2\a-chat-ai-spring\xf\src\main\java\com\ai\chat\a\properties\XfXhCosplayPlayerProperties.java

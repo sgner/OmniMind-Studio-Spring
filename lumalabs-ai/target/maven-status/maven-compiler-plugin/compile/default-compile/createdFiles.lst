@@ -1,0 +1,12 @@
+com\ai\chat\a\properties\LumaProperties.class
+com\ai\chat\a\api\lumalabsApi\dto\TtvDTO$TtvDTOBuilder.class
+com\ai\chat\a\api\lumalabsApi\response\GenVideoResponse$Assets.class
+com\ai\chat\a\api\lumalabsApi\response\GenVideoResponse.class
+com\ai\chat\a\api\lumalabsApi\dto\TtvDTO.class
+com\ai\chat\a\api\lumalabsApi\response\GenVideoResponse$RequestResponse$Keyframes$Frame1.class
+com\ai\chat\a\api\lumalabsApi\request\GenVideoRequest.class
+com\ai\chat\a\api\lumalabsApi\response\GenVideoResponse$RequestResponse$Keyframes.class
+com\ai\chat\a\api\lumalabsApi\response\GenVideoResponse$RequestResponse.class
+com\ai\chat\a\api\lumalabsApi\response\GenVideoResponse$RequestResponse$Keyframes$Frame0.class
+com\ai\chat\a\api\lumalabsApi\request\GenVideoRequest$1.class
+com\ai\chat\a\mq\GenVideoSender.class

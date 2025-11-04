@@ -1,8 +1,15 @@
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\chat\openai\AAIOpenAIChatClient.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\CustomThreadPoolConfig.java
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\DocumentReaderConfig.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\EmbeddingModelConfig.java
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\MilvusServiceConfig.java
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\config\OpenaiChatConfig.java
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\embedding\AAIOpenAIEmbedding.java
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\image\qianfan\AAIQianfanImageClient.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\rag\ContextMergeService.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\rag\EmbeddingCacheService.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\rag\LongTermMemoryArchiveService.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\rag\MemoryUpdateService.java
+D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\rag\ParallelRetrievalService.java
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\redis\RedisUtil.java
 D:\aoe2\a-chat-ai-spring\spring-ai-server\src\main\java\com\ai\chat\a\structuredOutput\JSONStructuredOutput.java

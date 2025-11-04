@@ -1,0 +1,6 @@
+D:\aoe2\a-chat-ai-spring\lumalabs-ai\src\main\java\com\ai\chat\a\api\lumalabsApi\dto\TtvDTO.java
+D:\aoe2\a-chat-ai-spring\lumalabs-ai\src\main\java\com\ai\chat\a\api\lumalabsApi\request\GenVideoRequest.java
+D:\aoe2\a-chat-ai-spring\lumalabs-ai\src\main\java\com\ai\chat\a\api\lumalabsApi\response\GenVideoResponse.java
+D:\aoe2\a-chat-ai-spring\lumalabs-ai\src\main\java\com\ai\chat\a\bot\LumaVideoBot.java
+D:\aoe2\a-chat-ai-spring\lumalabs-ai\src\main\java\com\ai\chat\a\mq\GenVideoSender.java
+D:\aoe2\a-chat-ai-spring\lumalabs-ai\src\main\java\com\ai\chat\a\properties\LumaProperties.java
