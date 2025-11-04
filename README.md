@@ -4,7 +4,7 @@
 基于Spring AI框架实现的对话系统，包括普通对话、RAG对话、流式对话以及多模态对话等功能。系统采用异步处理模式，结合向量数据库实现对话记忆和上下文理解能力。
 
 ## 2. 核心架构与设计
-
+![work!](https://github.com/sgner/images/blob/main/workwork.png)
 ### 2.1 整体架构
 
 系统采用分层架构设计：
