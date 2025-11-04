@@ -1,4 +1,3 @@
-# 一个有意思的项目，分享给所有人
 ### 我在新的test分支里进行新技术引入和改造https://github.com/sgner/OmniMind-Studio-Spring/tree/test?tab=readme-ov-file
 ## 图片画廊
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px 0; list-style: none; margin: 0 auto; max-width: 1400px;">
